@@ -27,7 +27,9 @@ import axios from 'axios';
 import { SharedModel } from '../model/SharedModel';
 
 @Component
-export default class Universe extends Vue {
+export default class Portfolio extends Vue {
+    @Prop() private msg!: string;
+
     private pagination: any;
     private headers: any;
     private desserts: any = [];
