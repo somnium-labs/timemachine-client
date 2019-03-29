@@ -13,6 +13,6 @@
         "no-consecutive-blank-lines": false,
         "trailing-comma": false,
         "no-console": false,
-        "no-namespace": true
+        "no-namespace": false
     }
 }

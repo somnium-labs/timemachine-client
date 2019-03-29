@@ -1,5 +1,5 @@
 export namespace SharedModel {
-    export interface Universe {
+    export interface Subject {
         assetCode: string;
         assetName: string;
         exchange: string;

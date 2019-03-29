@@ -1,10 +1,10 @@
 <template>
     <v-container fluid>
         <v-layout row wrap>
-            <v-flex xl6>
+            <v-flex xl8>
                 <Universe msg="Welcome to Your Vue.js + TypeScript App"/>
             </v-flex>
-            <v-flex xl6>
+            <v-flex xl4>
                 <Portfolio/>
             </v-flex>
         </v-layout>

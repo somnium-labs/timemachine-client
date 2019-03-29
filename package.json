@@ -14,7 +14,10 @@
   "main": "background.js",
   "dependencies": {
     "@mdi/font": "^2.6.95",
+    "@syncfusion/ej2-vue-grids": "^16.4.55",
+    "@types/numeral": "0.0.25",
     "axios": "^0.18.0",
+    "numeral": "^2.0.6",
     "roboto-fontface": "*",
     "vue": "^2.6.6",
     "vue-class-component": "^6.0.0",

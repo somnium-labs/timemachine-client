@@ -1,88 +1,40 @@
 <template>
-    <v-data-table
-        :headers="headers"
-        :items="desserts"
-        :pagination.sync="pagination"
-        class="elevation-1"
-        dark
-    >
-        <template v-slot:items="props">
-            <td class="text-xs-left">{{ props.item.assetCode }}</td>
-            <td class="text-xs-left">{{ props.item.assetName }}</td>
-            <td class="text-xs-left">{{ props.item.exchange }}</td>
-            <td class="text-xs-left">{{ props.item.sector }}</td>
-            <td class="text-xs-left">{{ props.item.industry }}</td>
-            <td class="text-xs-left">{{ props.item.marketCap }}</td>
-            <td class="text-xs-left">{{ props.item.per }}</td>
-            <td class="text-xs-left">{{ props.item.pbr }}</td>
-            <td class="text-xs-left">{{ props.item.evEvitda }}</td>
-            <td class="text-xs-left">{{ props.item.divYield }}</td>
-        </template>
-    </v-data-table>
+    <ejs-grid :dataSource="data"></ejs-grid>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import { SharedModel } from '../model/SharedModel';
+import { GridPlugin } from '@syncfusion/ej2-vue-grids';
+
+Vue.use(GridPlugin);
 
 @Component
 export default class Portfolio extends Vue {
-    @Prop() private msg!: string;
-
-    private pagination: any;
-    private headers: any;
-    private desserts: any = [];
+    private data: any[] = [];
 
     public constructor() {
         super();
-        this.pagination = {
-            rowsPerPage: 20
-        };
     }
 
     private async created() {
-        this.headers = [
-            {
-                text: 'Code',
-                align: 'left',
-                sortable: false,
-                value: 'assetCode'
-            },
-            { text: 'Name', value: 'assetName' },
-            { text: 'Exchange', value: 'exchange' },
-            { text: 'Sector', value: 'sector' },
-            { text: 'Industry', value: 'industry' },
-            { text: 'Market Cap', value: 'marketCap' },
-            { text: 'PER', value: 'per' },
-            { text: 'PBR', value: 'pbr' },
-            { text: 'EV/EVITDA', value: 'evEvitda' },
-            { text: 'Div Yield', value: 'divYield' }
+        this.data = [
+            { OrderID: 10248, CustomerID: 'VINET', Freight: 32.38 },
+            { OrderID: 10249, CustomerID: 'TOMSP', Freight: 11.61 },
+            { OrderID: 10250, CustomerID: 'HANAR', Freight: 65.83 },
+            { OrderID: 10251, CustomerID: 'VICTE', Freight: 41.34 },
+            { OrderID: 10252, CustomerID: 'SUPRD', Freight: 51.3 },
+            { OrderID: 10253, CustomerID: 'HANAR', Freight: 58.17 },
+            { OrderID: 10254, CustomerID: 'CHOPS', Freight: 22.98 },
+            { OrderID: 10255, CustomerID: 'RICSU', Freight: 148.33 },
+            { OrderID: 10256, CustomerID: 'WELLI', Freight: 13.97 }
         ];
-
-        try {
-            const result = await axios(
-                'https://localhost:44364/api/values/Universe?exchange=NIKKEI'
-            );
-            const data = result.data;
-            data.forEach((x: SharedModel.Universe) => {
-                const element = {
-                    assetCode: x.assetCode,
-                    assetName: x.assetName,
-                    exchange: x.exchange,
-                    sector: x.sector,
-                    industry: x.industry,
-                    marketCap: x.marketCap,
-                    per: x.per,
-                    pbr: x.pbr,
-                    evEvitda: x.evEvitda,
-                    divYield: x.divYield
-                };
-                this.desserts.push(element);
-            });
-        } catch (error) {
-            console.log(error);
-        }
     }
 }
 </script>
+
+
+<style>
+@import '../../node_modules/@syncfusion/ej2-vue-grids/styles/material-dark.css';
+</style>
