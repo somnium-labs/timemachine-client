@@ -22,5 +22,12 @@
     "eslint.autoFixOnSave": true,
     "prettier.eslintIntegration": true,
     "prettier.arrowParens": "always",
-    "vetur.format.defaultFormatter.js": "prettier-eslint"
+    "vetur.format.defaultFormatter.js": "prettier-eslint",
+
+    "files.exclude": {
+        "**/.git": true,
+        "dist": true,
+        "dist_electron": true
+    },
+    "csharp.referencesCodeLens.enabled": false
 }

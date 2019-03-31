@@ -1,7 +1,7 @@
 <template>
     <v-app>
         <v-toolbar>
-            <v-toolbar-side-icon></v-toolbar-side-icon>
+            <v-toolbar-side-icon @click="test"></v-toolbar-side-icon>
             <v-toolbar-title>TimeMachine</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items class="hidden-sm-and-down">
@@ -10,27 +10,38 @@
             </v-toolbar-items>
         </v-toolbar>
         <v-content>
-            <router-view/>
+            <router-view ref="routerComponent"/>
         </v-content>
     </v-app>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import Home from './views/Home.vue';
 
 @Component
-export default class App extends Vue {}
+export default class App extends Vue {
+    private test() {
+        if (this.$route.name === 'home') {
+            const homeComponent = this.$refs.routerComponent as Home;
+            homeComponent.toggleSidebar();
+        }
+    }
+}
 </script>
 
-<!-- Material theme used for this sample -->
+<!-- Material theme -->
 <style>
 @import '../node_modules/@syncfusion/ej2-base/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-buttons/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-calendars/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-dropdowns/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-inputs/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-navigations/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-popups/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-splitbuttons/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-vue-buttons/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-vue-calendars/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-vue-dropdowns/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-vue-inputs/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-vue-lists/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-vue-navigations/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-vue-popups/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-vue-richtexteditor/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-vue-splitbuttons/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-vue-inplace-editor/styles/material.css';
 @import '../node_modules/@syncfusion/ej2-vue-grids/styles/material.css';
 </style>

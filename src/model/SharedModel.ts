@@ -11,4 +11,9 @@ export namespace SharedModel {
         evEvitda: number;
         divYield: number;
     }
+
+    export interface TradeOption {
+        startDate: string;
+        endDate: string;
+    }
 }
