@@ -58,6 +58,7 @@
 import { Component, Prop, Vue, Provide, Inject } from 'vue-property-decorator';
 import axios from 'axios';
 import { SharedModel } from '../model/SharedModel';
+import Option from '@/components/Option.vue';
 import {
     GridPlugin,
     Resize,
@@ -75,6 +76,9 @@ Vue.use(GridPlugin);
 @Component({
     provide: {
         grid: [Page, Sort, Toolbar, ExcelExport, ContextMenu, Resize, Filter]
+    },
+    components: {
+        Option
     }
 })
 export default class Universe extends Vue {
@@ -132,7 +136,10 @@ export default class Universe extends Vue {
                 url: 'https://localhost:5001/api/values/AddPortfolio',
                 method: 'post',
                 headers: { 'Content-Type': 'application/json' },
-                data: codes
+                data: {
+                    startDate: this.$store.state.option.startDate,
+                    assetCodes: codes
+                }
             });
         }
     }

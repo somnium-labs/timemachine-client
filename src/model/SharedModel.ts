@@ -15,5 +15,14 @@ export namespace SharedModel {
     export interface TradeOption {
         startDate: string;
         endDate: string;
+        capital: number;
+        // benchmark: string;
+        commissionType: string;
+        commission: number;
+        slippageType: string;
+        slippage: number;
+        useOutstandingBalance: boolean;
+        usePointVolume: boolean;
+        tradeType: string;
     }
 }
