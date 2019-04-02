@@ -1,18 +1,20 @@
 <template>
     <v-container fluid class="home">
-        <ejs-sidebar id="option-sidebar" ref="sidebar" :target="target" width="300">
-            <Option/>
-        </ejs-sidebar>
-        <v-layout row wrap>
-            <v-flex xs12>
-                <Universe msg="Welcome to Your Vue.js + TypeScript App"/>
-            </v-flex>
-        </v-layout>
-        <v-layout row wrap>
-            <v-flex xs6>
-                <Portfolio/>
-            </v-flex>
-        </v-layout>
+        <v-container fluid>
+            <v-layout row wrap>
+                <v-flex xs12>
+                    <Universe class="universe"/>
+                </v-flex>
+            </v-layout>
+            <v-layout row wrap>
+                <v-flex xs6>
+                    <Portfolio ref="portfolio"/>
+                </v-flex>
+            </v-layout>
+            <ejs-sidebar id="option-sidebar" ref="sidebar" type="Auto" width="300" :target="target">
+                <Option/>
+            </ejs-sidebar>
+        </v-container>
     </v-container>
 </template>
 
@@ -25,6 +27,7 @@ import {
     SidebarPlugin,
     SidebarComponent
 } from '@syncfusion/ej2-vue-navigations';
+import { SharedModel } from '../model/SharedModel';
 
 Vue.use(SidebarPlugin);
 
@@ -49,6 +52,11 @@ export default class Home extends Vue {
             this.isShow = true;
             sidebarComponent.show();
         }
+    }
+
+    public addPortfolio(portfolio: SharedModel.Subject[]) {
+        const portfolioComponent = this.$refs.portfolio as Portfolio;
+        portfolioComponent.addPortfolio(portfolio);
     }
 }
 </script>

@@ -59,6 +59,7 @@ import { Component, Prop, Vue, Provide, Inject } from 'vue-property-decorator';
 import axios from 'axios';
 import { SharedModel } from '../model/SharedModel';
 import Option from '@/components/Option.vue';
+import Home from '@/views/Home.vue';
 import {
     GridPlugin,
     Resize,
@@ -127,20 +128,8 @@ export default class Universe extends Vue {
             const gridComponent = this.$refs.grid as GridComponent;
             const selectedrecords = (gridComponent.getSelectedRecords() as any) as SharedModel.Subject[];
 
-            const codes: string[] = [];
-            selectedrecords.forEach((x: SharedModel.Subject) => {
-                codes.push(x.assetCode);
-            });
-
-            axios({
-                url: 'https://localhost:5001/api/values/AddPortfolio',
-                method: 'post',
-                headers: { 'Content-Type': 'application/json' },
-                data: {
-                    startDate: this.$store.state.option.startDate,
-                    assetCodes: codes
-                }
-            });
+            const parent = this.$parent as Home;
+            parent.addPortfolio(selectedrecords);
         }
     }
 }
