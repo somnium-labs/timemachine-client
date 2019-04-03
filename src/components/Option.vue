@@ -115,6 +115,9 @@
                 <ejs-checkbox ref="leverage" class="e-checkbox-wrapper" :change="toggleLeverage"></ejs-checkbox>
             </v-flex>
         </v-layout>
+        <div class="center-align">
+            <v-btn color="success" @click="analyzePortfolio">Analyze Portfolio</v-btn>
+        </div>
     </v-container>
 </template>
 
@@ -123,18 +126,30 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { SharedModel } from '../model/SharedModel';
 import { DatePickerPlugin } from '@syncfusion/ej2-vue-calendars';
 import { NumericTextBoxPlugin } from '@syncfusion/ej2-vue-inputs';
-import { CheckBoxPlugin, CheckBoxComponent } from '@syncfusion/ej2-vue-buttons';
+import { enableRipple } from '@syncfusion/ej2-base';
+import Home from '../views/Home.vue';
+import {
+    CheckBoxPlugin,
+    CheckBoxComponent,
+    ButtonPlugin
+} from '@syncfusion/ej2-vue-buttons';
 import {
     ComboBoxPlugin,
     ComboBoxComponent
 } from '@syncfusion/ej2-vue-dropdowns';
 
+enableRipple(true);
 Vue.use(CheckBoxPlugin);
 Vue.use(NumericTextBoxPlugin);
 Vue.use(DatePickerPlugin);
 Vue.use(ComboBoxPlugin);
+Vue.use(ButtonPlugin);
 
-@Component
+@Component({
+    components: {
+        Home
+    }
+})
 export default class Option extends Vue {
     private dateFormat: string = 'yyyy-MM-dd';
     private capitalStep: number = 1000;
@@ -145,10 +160,6 @@ export default class Option extends Vue {
 
     private slippageStep: number = 0.0001;
     private slippageFormat: string = 'P2';
-
-    public test() {
-        alert('option');
-    }
 
     private get startDate() {
         return this.$store.state.option.startDate;
@@ -265,11 +276,21 @@ export default class Option extends Vue {
     private toggleAllowDecimalPoint(args: any) {
         this.$store.state.option.usePointVolume = args.checked;
     }
+
+    private analyzePortfolio() {
+        const homeComponent = this.$parent.$parent as Home;
+        homeComponent.analyzePortfolio();
+    }
 }
 </script>
 
 <style>
 .e-checkbox-wrapper {
     margin-top: 7px;
+}
+
+.center-align {
+    text-align: center;
+    padding: 20px;
 }
 </style>

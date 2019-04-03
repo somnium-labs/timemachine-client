@@ -1,7 +1,14 @@
 <template>
-    <ejs-grid ref="portfolioComponent" :dataSource="data">
+    <ejs-grid
+        ref="portfolioComponent"
+        :dataSource="data"
+        :editSettings="settings"
+        :contextMenuItems="contextMenuItems"
+        :contextMenuClick="contextMenuClick"
+        :selectionSettings="selectionOptions"
+    >
         <e-columns>
-            <e-column field="assetCode" headerText="Code" textAlign="left"></e-column>
+            <e-column isPrimaryKey="true" field="assetCode" headerText="Code" textAlign="left"></e-column>
             <e-column field="assetName" headerText="Name" textAlign="left"></e-column>
             <e-column field="volume" headerText="Volume" textAlign="left"></e-column>
             <e-column field="ratio" headerText="Ratio" textAlign="left"></e-column>
@@ -13,19 +20,45 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import axios from 'axios';
+import { TS } from 'typescript-linq';
 import { SharedModel } from '../model/SharedModel';
-import { GridPlugin, GridComponent } from '@syncfusion/ej2-vue-grids';
+import {
+    GridPlugin,
+    GridComponent,
+    Edit,
+    ContextMenu
+} from '@syncfusion/ej2-vue-grids';
 
 Vue.use(GridPlugin);
 
-@Component
+@Component({
+    provide: {
+        grid: [Edit, ContextMenu]
+    }
+})
 export default class Portfolio extends Vue {
     private data: any[] = [];
-    private dataObserver: any[] = [];
+    private portfolio: TS.Collections.Dictionary<
+        string,
+        any
+    > = new TS.Collections.Dictionary<string, any>();
+    private selectionOptions = { type: 'Multiple' };
+    private contextMenuItems = [
+        { text: 'Remove Portfolio', id: 'removePortfolio' }
+    ];
+    private settings = {
+        allowAdding: true,
+        allowEditing: true,
+        allowDeleting: true
+    };
 
-    public async addPortfolio(portfolio: SharedModel.Subject[]) {
+    public test() {
+        alert('test');
+    }
+
+    public async addPortfolio(universe: SharedModel.Subject[]) {
         const assetInfo: any[] = [];
-        portfolio.forEach((x: SharedModel.Subject) => {
+        universe.forEach((x: SharedModel.Subject) => {
             assetInfo.push({ assetCode: x.assetCode, exchange: x.exchange });
         });
 
@@ -39,25 +72,81 @@ export default class Portfolio extends Vue {
             }
         });
 
-        const gridComponent = this.$refs.portfolioComponent as GridComponent;
-        gridComponent.startEdit();
-
         const data = response.data.data;
         data.forEach((x: any) => {
-            const element = {
-                assetCode: x.assetCode,
-                assetName: x.assetName,
-                volume: 0,
-                ratio: 0,
-                price: x.openPrice
-            };
-            this.data.push(element);
+            if (!this.portfolio.containsKey(x.assetCode)) {
+                const record = {
+                    assetCode: x.assetCode,
+                    assetName: x.assetName,
+                    volume: 0,
+                    ratio: 0,
+                    price: x.openPrice
+                };
+                this.addRecord(record);
+            }
+        });
+    }
+
+    public analyzePortfolio() {
+        this.portfolio.forEach((x) => {
+            console.log(x.value.assetName);
         });
 
-        gridComponent.endEdit();
-        gridComponent.updated();
+        const assetInfo: any[] = [];
+        this.portfolio.forEach((x: any) => {
+            const asset = {
+                assetCode: x.value.assetCode,
+                ratio: x.value.ratio,
+            };
+            assetInfo.push(asset);
+        });
 
-        // this.data = this.dataObserver;
+
+        axios({
+            url: 'https://localhost:5001/api/values/AnalyzePortfolio',
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' },
+            data: {
+                portfolio: assetInfo,
+                startDate: this.$store.state.option.startDate,
+                endDate: this.$store.state.option.endDate,
+                capital: this.$store.state.option.capital,
+                commissionType: this.$store.state.option.commissionType,
+                commission: this.$store.state.option.commission,
+                slippageType: this.$store.state.option.slippageType,
+                slippage: this.$store.state.option.slippage,
+                orderVolumeType: this.$store.state.option.tradeType,
+                allowDecimalPoint: this.$store.state.option.usePointVolume,
+                AllowLeverage : this.$store.state.option.useOutstandingBalance
+            }
+        });
+    }
+
+    private addRecord(record: any) {
+        const gridComponent = this.$refs.portfolioComponent as GridComponent;
+        gridComponent.addRecord(record);
+        this.portfolio.add(record.assetCode, {
+            assetCode: record.assetCode,
+            assetName: record.assetName,
+            volume: record.volume,
+            ratio: record.ratio,
+            price: record.openPrice
+        });
+    }
+
+    private removeRecord() {
+        const gridComponent = this.$refs.portfolioComponent as GridComponent;
+        gridComponent.deleteRecord();
+        const selectedrecords = (gridComponent.getSelectedRecords() as any) as SharedModel.Subject[];
+        selectedrecords.forEach((subject: SharedModel.Subject) => {
+            this.portfolio.remove(subject.assetCode);
+        });
+    }
+
+    private async contextMenuClick(args: any) {
+        if (args.item.id === 'removePortfolio') {
+            this.removeRecord();
+        }
     }
 }
 </script>

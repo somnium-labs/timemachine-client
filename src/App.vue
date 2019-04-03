@@ -1,7 +1,7 @@
 <template>
     <v-app>
         <v-toolbar>
-            <v-toolbar-side-icon @click="test"></v-toolbar-side-icon>
+            <v-toolbar-side-icon @click="toggleSidebar"></v-toolbar-side-icon>
             <v-toolbar-title>TimeMachine</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items class="hidden-sm-and-down">
@@ -21,7 +21,7 @@ import Home from './views/Home.vue';
 
 @Component
 export default class App extends Vue {
-    private test() {
+    private toggleSidebar() {
         if (this.$route.name === 'home') {
             const homeComponent = this.$refs.routerComponent as Home;
             homeComponent.toggleSidebar();

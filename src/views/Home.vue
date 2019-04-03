@@ -54,9 +54,14 @@ export default class Home extends Vue {
         }
     }
 
-    public addPortfolio(portfolio: SharedModel.Subject[]) {
+    public addPortfolio(universe: SharedModel.Subject[]) {
         const portfolioComponent = this.$refs.portfolio as Portfolio;
-        portfolioComponent.addPortfolio(portfolio);
+        portfolioComponent.addPortfolio(universe);
+    }
+
+    public analyzePortfolio() {
+        const portfolioComponent = this.$refs.portfolio as Portfolio;
+        portfolioComponent.analyzePortfolio();
     }
 }
 </script>
