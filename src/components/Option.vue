@@ -115,6 +115,21 @@
                 <ejs-checkbox ref="leverage" class="e-checkbox-wrapper" :change="toggleLeverage"></ejs-checkbox>
             </v-flex>
         </v-layout>
+        <!-- 벤치마크 -->
+        <v-layout row wrap>
+            <v-flex xs6>
+                <h3 style="margin-top: 0.28em">Benchmark</h3>
+            </v-flex>
+            <v-flex xs6>
+                <ejs-combobox
+                    ref="benchmark"
+                    id="benchmark"
+                    showClearButton="false"
+                    :dataSource="benchmarkSource"
+                    :change="change"
+                ></ejs-combobox>
+            </v-flex>
+        </v-layout>
         <div class="center-align">
             <v-btn color="success" @click="analyzePortfolio">Analyze Portfolio</v-btn>
         </div>
@@ -154,6 +169,7 @@ export default class Option extends Vue {
     private dateFormat: string = 'yyyy-MM-dd';
     private capitalStep: number = 1000;
     private comboboxSource = ['Ratio', 'Fixed'];
+    private benchmarkSource = ['NIKKEI225'];
 
     private commissionStep: number = 0.0001;
     private commissionFormat: string = 'P2';
@@ -206,6 +222,7 @@ export default class Option extends Vue {
             startDate: '2010-01-01',
             endDate: '2019-01-01',
             capital: 100000,
+            benchmark: '',
             commissionType: '',
             commission: 0.0003,
             slippageType: '',
@@ -236,6 +253,11 @@ export default class Option extends Vue {
         if (leverageCheckBox != null) {
             leverageCheckBox.ej2Instances.checked = true;
         }
+
+        const benchmarkComboBox = this.$refs.benchmark as ComboBoxComponent;
+        if (benchmarkComboBox != null) {
+            benchmarkComboBox.ej2Instances.value = 'NIKKEI225';
+        }
     }
 
     private change(args: any) {
@@ -265,6 +287,9 @@ export default class Option extends Vue {
             }
         } else if (args.element.id === 'orderVolumeType') {
             this.$store.state.option.tradeType =
+                args.itemData != null ? args.itemData.value : '';
+        } else if (args.element.id === 'benchmark') {
+            this.$store.state.option.benchmark =
                 args.itemData != null ? args.itemData.value : '';
         }
     }

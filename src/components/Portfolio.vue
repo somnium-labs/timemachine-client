@@ -88,19 +88,14 @@ export default class Portfolio extends Vue {
     }
 
     public analyzePortfolio() {
-        this.portfolio.forEach((x) => {
-            console.log(x.value.assetName);
-        });
-
         const assetInfo: any[] = [];
         this.portfolio.forEach((x: any) => {
             const asset = {
                 assetCode: x.value.assetCode,
-                ratio: x.value.ratio,
+                ratio: x.value.ratio
             };
             assetInfo.push(asset);
         });
-
 
         axios({
             url: 'https://localhost:5001/api/values/AnalyzePortfolio',
@@ -111,13 +106,14 @@ export default class Portfolio extends Vue {
                 startDate: this.$store.state.option.startDate,
                 endDate: this.$store.state.option.endDate,
                 capital: this.$store.state.option.capital,
+                benchmark: this.$store.state.option.benchmark,
                 commissionType: this.$store.state.option.commissionType,
                 commission: this.$store.state.option.commission,
                 slippageType: this.$store.state.option.slippageType,
                 slippage: this.$store.state.option.slippage,
                 orderVolumeType: this.$store.state.option.tradeType,
                 allowDecimalPoint: this.$store.state.option.usePointVolume,
-                AllowLeverage : this.$store.state.option.useOutstandingBalance
+                AllowLeverage: this.$store.state.option.useOutstandingBalance
             }
         });
     }

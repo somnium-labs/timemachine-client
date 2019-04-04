@@ -16,7 +16,7 @@ export namespace SharedModel {
         startDate: string;
         endDate: string;
         capital: number;
-        // benchmark: string;
+        benchmark: string;
         commissionType: string;
         commission: number;
         slippageType: string;
