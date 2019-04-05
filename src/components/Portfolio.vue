@@ -87,7 +87,7 @@ export default class Portfolio extends Vue {
         });
     }
 
-    public analyzePortfolio() {
+    public async analyzePortfolio() {
         const assetInfo: any[] = [];
         this.portfolio.forEach((x: any) => {
             const asset = {
@@ -97,7 +97,7 @@ export default class Portfolio extends Vue {
             assetInfo.push(asset);
         });
 
-        axios({
+        const result = await axios({
             url: 'https://localhost:5001/api/values/AnalyzePortfolio',
             method: 'post',
             headers: { 'Content-Type': 'application/json' },
@@ -116,6 +116,8 @@ export default class Portfolio extends Vue {
                 AllowLeverage: this.$store.state.option.useOutstandingBalance
             }
         });
+
+        console.log(result);
     }
 
     private addRecord(record: any) {
