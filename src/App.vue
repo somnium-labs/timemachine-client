@@ -6,7 +6,6 @@
             <v-spacer></v-spacer>
             <v-toolbar-items class="hidden-sm-and-down">
                 <v-btn flat to="/">Setting</v-btn>
-                <v-btn flat to="/report">Report</v-btn>
             </v-toolbar-items>
         </v-toolbar>
         <v-content>

@@ -1,20 +1,23 @@
 <template>
-    <ejs-grid
-        ref="portfolioComponent"
-        :dataSource="data"
-        :editSettings="settings"
-        :contextMenuItems="contextMenuItems"
-        :contextMenuClick="contextMenuClick"
-        :selectionSettings="selectionOptions"
-    >
-        <e-columns>
-            <e-column isPrimaryKey="true" field="assetCode" headerText="Code" textAlign="left"></e-column>
-            <e-column field="assetName" headerText="Name" textAlign="left"></e-column>
-            <e-column field="volume" headerText="Volume" textAlign="left"></e-column>
-            <e-column field="ratio" headerText="Ratio" textAlign="left"></e-column>
-            <e-column field="price" headerText="Price" textAlign="left"></e-column>
-        </e-columns>
-    </ejs-grid>
+    <div>
+        <H3>Portfolio</H3>
+        <ejs-grid
+            ref="portfolioComponent"
+            :dataSource="data"
+            :editSettings="settings"
+            :contextMenuItems="contextMenuItems"
+            :contextMenuClick="contextMenuClick"
+            :selectionSettings="selectionOptions"
+        >
+            <e-columns>
+                <e-column isPrimaryKey="true" field="assetCode" headerText="Code" textAlign="left"></e-column>
+                <e-column field="assetName" headerText="Name" textAlign="left"></e-column>
+                <e-column field="volume" headerText="Volume" textAlign="left"></e-column>
+                <e-column field="ratio" headerText="Ratio" textAlign="left"></e-column>
+                <e-column field="price" headerText="Price" textAlign="left"></e-column>
+            </e-columns>
+        </ejs-grid>
+    </div>
 </template>
 
 <script lang="ts">
@@ -51,10 +54,6 @@ export default class Portfolio extends Vue {
         allowEditing: true,
         allowDeleting: true
     };
-
-    public test() {
-        alert('test');
-    }
 
     public async addPortfolio(universe: SharedModel.Subject[]) {
         const assetInfo: any[] = [];
@@ -117,7 +116,7 @@ export default class Portfolio extends Vue {
             }
         });
 
-        console.log(result);
+        return result;
     }
 
     private addRecord(record: any) {

@@ -1,57 +1,60 @@
 <template>
-    <ejs-grid
-        ref="grid"
-        id="universeGrid"
-        :dataSource="data"
-        :selectionSettings="selectionOptions"
-        :allowFiltering="true"
-        :filterSettings="filterOptions"
-        :allowResizing="false"
-        :allowPaging="true"
-        :pageSettings="pageSettings"
-        :allowSorting="true"
-        :toolbar="toolbar"
-        :allowExcelExport="true"
-        :toolbarClick="toolbarClick"
-        :contextMenuItems="contextMenuItems"
-        :contextMenuClick="contextMenuClick"
-    >
-        <e-columns>
-            <e-column field="assetCode" headerText="Code" textAlign="left"></e-column>
-            <e-column
-                field="assetName"
-                headerText="Name"
-                textAlign="left"
-                clipMode="EllipsisWithTooltip"
-            ></e-column>
-            <e-column field="exchange" headerText="Exchange" textAlign="left" :filter="filter"></e-column>
-            <e-column
-                field="sector"
-                headerText="Sector"
-                textAlign="left"
-                clipMode="EllipsisWithTooltip"
-                :filter="filter"
-            ></e-column>
-            <e-column
-                field="industry"
-                headerText="Industry"
-                textAlign="left"
-                clipMode="EllipsisWithTooltip"
-                :filter="filter"
-            ></e-column>
-            <e-column
-                field="marketCap"
-                headerText="Market Cap"
-                textAlign="left"
-                format="N0"
-                width="180"
-            ></e-column>
-            <e-column field="per" headerText="PER" textAlign="center"></e-column>
-            <e-column field="pbr" headerText="PBR" textAlign="center"></e-column>
-            <e-column field="evEvitda" headerText="EV/EVITDA" textAlign="center"></e-column>
-            <e-column field="divYield" headerText="Div Yield" textAlign="center"></e-column>
-        </e-columns>
-    </ejs-grid>
+    <div>
+        <H3>Universe</H3>
+        <ejs-grid
+            ref="grid"
+            id="universeGrid"
+            :dataSource="data"
+            :selectionSettings="selectionOptions"
+            :allowFiltering="true"
+            :filterSettings="filterOptions"
+            :allowResizing="false"
+            :allowPaging="true"
+            :pageSettings="pageSettings"
+            :allowSorting="true"
+            :toolbar="toolbar"
+            :allowExcelExport="true"
+            :toolbarClick="toolbarClick"
+            :contextMenuItems="contextMenuItems"
+            :contextMenuClick="contextMenuClick"
+        >
+            <e-columns>
+                <e-column field="assetCode" headerText="Code" textAlign="left"></e-column>
+                <e-column
+                    field="assetName"
+                    headerText="Name"
+                    textAlign="left"
+                    clipMode="EllipsisWithTooltip"
+                ></e-column>
+                <e-column field="exchange" headerText="Exchange" textAlign="left" :filter="filter"></e-column>
+                <e-column
+                    field="sector"
+                    headerText="Sector"
+                    textAlign="left"
+                    clipMode="EllipsisWithTooltip"
+                    :filter="filter"
+                ></e-column>
+                <e-column
+                    field="industry"
+                    headerText="Industry"
+                    textAlign="left"
+                    clipMode="EllipsisWithTooltip"
+                    :filter="filter"
+                ></e-column>
+                <e-column
+                    field="marketCap"
+                    headerText="Market Cap"
+                    textAlign="left"
+                    format="N0"
+                    width="180"
+                ></e-column>
+                <e-column field="per" headerText="PER" textAlign="center"></e-column>
+                <e-column field="pbr" headerText="PBR" textAlign="center"></e-column>
+                <e-column field="evEvitda" headerText="EV/EVITDA" textAlign="center"></e-column>
+                <e-column field="divYield" headerText="Div Yield" textAlign="center"></e-column>
+            </e-columns>
+        </ejs-grid>
+    </div>
 </template>
 
 <script lang="ts">
@@ -84,9 +87,15 @@ Vue.use(GridPlugin);
 })
 export default class Universe extends Vue {
     private data: any[] = [];
+    private originData: any[] = [];
+
     private pageSettings = { pageSize: 20 };
     private toolbar = ['ExcelExport'];
-    private contextMenuItems = [{ text: 'Add Portfolio', id: 'addPortfolio' }];
+    private contextMenuItems = [
+        { text: 'Add Portfolio', id: 'addPortfolio' },
+        { text: 'Select', id: 'select' },
+        { text: 'Reset', id: 'reset' }
+    ];
     private selectionOptions = { type: 'Multiple' };
     private filterOptions = { type: 'Menu' };
     private filter = { type: 'CheckBox' };
@@ -114,6 +123,7 @@ export default class Universe extends Vue {
         });
 
         this.data = temp;
+        this.originData = temp;
     }
 
     private toolbarClick(args: any) {
@@ -130,6 +140,14 @@ export default class Universe extends Vue {
 
             const parent = this.$parent as Home;
             parent.addPortfolio(selectedrecords);
+        } else if (args.item.id === 'select') {
+            const gridComponent = this.$refs.grid as GridComponent;
+            const selectedrecords = (gridComponent.getSelectedRecords() as any) as SharedModel.Subject[];
+            this.data = selectedrecords;
+        } else if (args.item.id === 'reset') {
+            const gridComponent = this.$refs.grid as GridComponent;
+            const selectedrecords = (gridComponent.getSelectedRecords() as any) as SharedModel.Subject[];
+            this.data = this.originData;
         }
     }
 }

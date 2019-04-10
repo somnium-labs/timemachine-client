@@ -2,7 +2,7 @@
     <v-container fluid>
         <v-layout row wrap>
             <v-flex xs6>
-                <h3 style="margin-top: 0.28em">Start Date</h3>
+                <h6 style="margin-top: 0.28em">Start Date</h6>
             </v-flex>
             <v-flex xs6>
                 <ejs-datepicker :value="startDate" :format="dateFormat"></ejs-datepicker>
@@ -11,7 +11,7 @@
         <!-- 종료날짜 -->
         <v-layout row wrap>
             <v-flex xs6>
-                <h3 style="margin-top: 0.28em">End Date</h3>
+                <h6 style="margin-top: 0.28em">End Date</h6>
             </v-flex>
             <v-flex xs6>
                 <ejs-datepicker :value="endDate" :format="dateFormat"></ejs-datepicker>
@@ -20,7 +20,7 @@
         <!-- 자산 -->
         <v-layout row wrap>
             <v-flex xs6>
-                <h3 style="margin-top: 0.28em">Capital</h3>
+                <h6 style="margin-top: 0.28em">Capital</h6>
             </v-flex>
             <v-flex xs6>
                 <ejs-numerictextbox :value="capital" :step="capitalStep" format="¥#,##"></ejs-numerictextbox>
@@ -29,7 +29,7 @@
         <!-- 수수료 타입 -->
         <v-layout row wrap>
             <v-flex xs6>
-                <h3 style="margin-top: 0.28em">Commission</h3>
+                <h6 style="margin-top: 0.28em">Commission</h6>
             </v-flex>
             <v-flex xs6>
                 <ejs-combobox
@@ -57,7 +57,7 @@
         <!-- 슬리피지 타입 -->
         <v-layout row wrap>
             <v-flex xs6>
-                <h3 style="margin-top: 0.28em">Slippage</h3>
+                <h6 style="margin-top: 0.28em">Slippage</h6>
             </v-flex>
             <v-flex xs6>
                 <ejs-combobox
@@ -81,7 +81,7 @@
         <!-- 주문수량 -->
         <v-layout row wrap>
             <v-flex xs6>
-                <h3 style="margin-top: 0.28em">Order Volume</h3>
+                <h6 style="margin-top: 0.28em">Order Volume</h6>
             </v-flex>
             <v-flex xs6>
                 <ejs-combobox
@@ -109,7 +109,7 @@
         <!-- 미수금 사용 -->
         <v-layout row wrap>
             <v-flex xs6>
-                <h3 style="margin-top: 0.28em">Leverage</h3>
+                <h6 style="margin-top: 0.28em">Leverage</h6>
             </v-flex>
             <v-flex xs6>
                 <ejs-checkbox ref="leverage" class="e-checkbox-wrapper" :change="toggleLeverage"></ejs-checkbox>
@@ -118,7 +118,7 @@
         <!-- 벤치마크 -->
         <v-layout row wrap>
             <v-flex xs6>
-                <h3 style="margin-top: 0.28em">Benchmark</h3>
+                <h6 style="margin-top: 0.28em">Benchmark</h6>
             </v-flex>
             <v-flex xs6>
                 <ejs-combobox
