@@ -8,13 +8,19 @@
             :contextMenuItems="contextMenuItems"
             :contextMenuClick="contextMenuClick"
             :selectionSettings="selectionOptions"
+            :rowDataBound="changeRecord"
         >
             <e-columns>
                 <e-column isPrimaryKey="true" field="assetCode" headerText="Code" textAlign="left"></e-column>
-                <e-column field="assetName" headerText="Name" textAlign="left"></e-column>
-                <e-column field="volume" headerText="Volume" textAlign="left"></e-column>
-                <e-column field="ratio" headerText="Ratio" textAlign="left"></e-column>
-                <e-column field="price" headerText="Price" textAlign="left"></e-column>
+                <e-column
+                    field="assetName"
+                    headerText="Name"
+                    textAlign="left"
+                    :allowEditing="false"
+                ></e-column>
+                <e-column field="volume" headerText="Volume" textAlign="left" format="N1"></e-column>
+                <e-column field="ratio" headerText="Ratio" textAlign="left" format="P2"></e-column>
+                <e-column field="price" headerText="Price" textAlign="left" :allowEditing="false"></e-column>
             </e-columns>
         </ejs-grid>
     </div>
@@ -58,7 +64,12 @@ export default class Portfolio extends Vue {
     public async addPortfolio(universe: SharedModel.Subject[]) {
         const assetInfo: any[] = [];
         universe.forEach((x: SharedModel.Subject) => {
-            assetInfo.push({ assetCode: x.assetCode, exchange: x.exchange });
+            if (!this.portfolio.containsKey(x.assetCode)) {
+                assetInfo.push({
+                    assetCode: x.assetCode,
+                    exchange: x.exchange
+                });
+            }
         });
 
         const response = await axios({
@@ -72,18 +83,33 @@ export default class Portfolio extends Vue {
         });
 
         const data = response.data.data;
+        const count = data.length + this.portfolio.count();
+
         data.forEach((x: any) => {
-            if (!this.portfolio.containsKey(x.assetCode)) {
-                const record = {
-                    assetCode: x.assetCode,
-                    assetName: x.assetName,
-                    volume: 0,
-                    ratio: 0,
-                    price: x.openPrice
-                };
-                this.addRecord(record);
-            }
+            const ratio = 1 / count;
+            const price = x.openPrice;
+            const volume = (this.$store.state.option.capital * ratio) / price;
+            const record = {
+                assetCode: x.assetCode,
+                assetName: x.assetName,
+                volume: volume,
+                ratio: ratio,
+                price: x.openPrice
+            };
+            this.addRecord(record);
         });
+
+        const temp: any[] = [];
+        this.portfolio.forEach(x => {
+            x.value.ratio = 1 / count;
+            x.value.volume =
+                (this.$store.state.option.capital * x.value.ratio) /
+                x.value.price;
+
+            temp.push(x.value);
+        });
+
+        this.data = temp;
     }
 
     public async analyzePortfolio() {
@@ -91,6 +117,7 @@ export default class Portfolio extends Vue {
         this.portfolio.forEach((x: any) => {
             const asset = {
                 assetCode: x.value.assetCode,
+                volume: x.value.volume,
                 ratio: x.value.ratio
             };
             assetInfo.push(asset);
@@ -105,14 +132,22 @@ export default class Portfolio extends Vue {
                 startDate: this.$store.state.option.startDate,
                 endDate: this.$store.state.option.endDate,
                 capital: this.$store.state.option.capital,
-                benchmark: this.$store.state.option.benchmark,
+                benchmark: {
+                    assetCode: this.$store.state.option.benchmark,
+                    volume: 0,
+                    ratio: 0
+                },
                 commissionType: this.$store.state.option.commissionType,
                 commission: this.$store.state.option.commission,
                 slippageType: this.$store.state.option.slippageType,
                 slippage: this.$store.state.option.slippage,
                 orderVolumeType: this.$store.state.option.tradeType,
                 allowDecimalPoint: this.$store.state.option.usePointVolume,
-                AllowLeverage: this.$store.state.option.useOutstandingBalance
+                AllowLeverage: this.$store.state.option.useOutstandingBalance,
+                useBuyAndHold: this.$store.state.option.useBuyAndHold,
+                useVolatilityBreakout: this.$store.state.option
+                    .useVolatilityBreakout,
+                useMovingAverage: this.$store.state.option.useMovingAverage
             }
         });
 
@@ -120,14 +155,14 @@ export default class Portfolio extends Vue {
     }
 
     private addRecord(record: any) {
-        const gridComponent = this.$refs.portfolioComponent as GridComponent;
-        gridComponent.addRecord(record);
+        // const gridComponent = this.$refs.portfolioComponent as GridComponent;
+        // gridComponent.addRecord(record);
         this.portfolio.add(record.assetCode, {
             assetCode: record.assetCode,
             assetName: record.assetName,
             volume: record.volume,
             ratio: record.ratio,
-            price: record.openPrice
+            price: record.price
         });
     }
 
@@ -144,6 +179,22 @@ export default class Portfolio extends Vue {
         if (args.item.id === 'removePortfolio') {
             this.removeRecord();
         }
+    }
+
+    private changeRecord(args: any) {
+        // const assetCode = args.data.assetCode;
+        // const ratio = args.data.ratio;
+        // const volume = args.data.volume;
+        // const oldRatio = this.portfolio.getValue(assetCode).ratio;
+        // const oldVolume = this.portfolio.getValue(assetCode).volume;
+        // if (oldRatio !== ratio) {
+        //     this.portfolio.getValue(assetCode).ratio = ratio;
+        // }
+        // if (oldVolume !== volume) {
+        //     this.portfolio.getValue(assetCode).volume = volume;
+        // }
+        // const gridComponent = this.$refs.portfolioComponent as GridComponent;
+        // gridComponent.setCellValue(assetCode, 'volume', 20);
     }
 }
 </script>

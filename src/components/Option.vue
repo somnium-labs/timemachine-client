@@ -129,6 +129,42 @@
                     :change="change"
                 ></ejs-combobox>
             </v-flex>
+            <!-- Buy And Hold -->
+            <v-flex xs6>
+                <h6 style="margin-top: 0.28em">Buy And Hold</h6>
+            </v-flex>
+            <v-flex xs6>
+                <ejs-checkbox
+                    ref="buyAndHold"
+                    class="e-checkbox-wrapper"
+                    label="Use"
+                    :change="toggleBuyAndHold"
+                ></ejs-checkbox>
+            </v-flex>
+            <!-- Volatility Breakout -->
+            <v-flex xs6>
+                <h6 style="margin-top: 0.28em">Volatility Breakout</h6>
+            </v-flex>
+            <v-flex xs6>
+                <ejs-checkbox
+                    ref="volatilityBreakout"
+                    class="e-checkbox-wrapper"
+                    label="Use"
+                    :change="toggleVolatilityBreakout"
+                ></ejs-checkbox>
+            </v-flex>
+            <!-- Moving Average -->
+            <v-flex xs6>
+                <h6 style="margin-top: 0.28em">Moving Average</h6>
+            </v-flex>
+            <v-flex xs6>
+                <ejs-checkbox
+                    ref="movingAverage"
+                    class="e-checkbox-wrapper"
+                    label="Use"
+                    :change="toggleMovingAverage"
+                ></ejs-checkbox>
+            </v-flex>
         </v-layout>
         <div class="center-align">
             <v-btn color="success" @click="analyzePortfolio">Analyze Portfolio</v-btn>
@@ -169,7 +205,7 @@ export default class Option extends Vue {
     private dateFormat: string = 'yyyy-MM-dd';
     private capitalStep: number = 1000;
     private comboboxSource = ['Ratio', 'Fixed'];
-    private benchmarkSource = ['NIKKEI225'];
+    private benchmarkSource = ['JP225'];
 
     private commissionStep: number = 0.0001;
     private commissionFormat: string = 'P2';
@@ -229,7 +265,10 @@ export default class Option extends Vue {
             slippage: 0.0001,
             tradeType: '',
             useOutstandingBalance: true,
-            usePointVolume: false
+            usePointVolume: false,
+            useBuyAndHold: true,
+            useVolatilityBreakout: true,
+            useMovingAverage: false
         };
     }
 
@@ -256,7 +295,24 @@ export default class Option extends Vue {
 
         const benchmarkComboBox = this.$refs.benchmark as ComboBoxComponent;
         if (benchmarkComboBox != null) {
-            benchmarkComboBox.ej2Instances.value = 'NIKKEI225';
+            benchmarkComboBox.ej2Instances.value = 'JP225';
+        }
+
+        const buyAndHoldCheckBox = this.$refs.buyAndHold as CheckBoxComponent;
+        if (buyAndHoldCheckBox != null) {
+            buyAndHoldCheckBox.ej2Instances.checked = true;
+        }
+
+        const volatilityBreakoutCheckBox = this.$refs
+            .volatilityBreakout as CheckBoxComponent;
+        if (volatilityBreakoutCheckBox != null) {
+            volatilityBreakoutCheckBox.ej2Instances.checked = true;
+        }
+
+        const movingAverageCheckBox = this.$refs
+            .movingAverage as CheckBoxComponent;
+        if (movingAverageCheckBox != null) {
+            movingAverageCheckBox.ej2Instances.checked = false;
         }
     }
 
@@ -300,6 +356,18 @@ export default class Option extends Vue {
 
     private toggleAllowDecimalPoint(args: any) {
         this.$store.state.option.usePointVolume = args.checked;
+    }
+
+    private toggleBuyAndHold(args: any) {
+        this.$store.state.option.useBuyAndHold = args.checked;
+    }
+
+    private toggleVolatilityBreakout(args: any) {
+        this.$store.state.option.useVolatilityBreakout = args.checked;
+    }
+
+    private toggleMovingAverage(args: any) {
+        this.$store.state.option.useMovingAverage = args.checked;
     }
 
     private analyzePortfolio() {

@@ -24,5 +24,8 @@ export namespace SharedModel {
         useOutstandingBalance: boolean;
         usePointVolume: boolean;
         tradeType: string;
+        useBuyAndHold: boolean;
+        useVolatilityBreakout: boolean;
+        useMovingAverage: boolean;
     }
 }

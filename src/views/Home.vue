@@ -15,7 +15,7 @@
                 </v-flex>
             </v-layout>
             <v-layout row wrap>
-                <v-flex xs6>
+                <v-flex xs8>
                     <Report startDate endDate ref="report"/>
                 </v-flex>
             </v-layout>
