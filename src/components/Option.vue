@@ -33,7 +33,7 @@
             </v-flex>
             <v-flex xs6>
                 <ejs-combobox
-                    ref="commission"
+                    ref="commissionType"
                     id="commissionType"
                     showClearButton="false"
                     :dataSource="comboboxSource"
@@ -48,9 +48,12 @@
             </v-flex>
             <v-flex xs6>
                 <ejs-numerictextbox
+                    ref="commission"
+                    id="commission"
                     :value="commission"
                     :step="commissionStep"
                     :format="commissionFormat"
+                    :change="commissionChange"
                 ></ejs-numerictextbox>
             </v-flex>
         </v-layout>
@@ -75,7 +78,7 @@
                 <!-- empty -->
             </v-flex>
             <v-flex xs6>
-                <ejs-numerictextbox :value="slippage" :step="slippageStep" :format="slippageFormat"></ejs-numerictextbox>
+                <ejs-numerictextbox :value="slippage" :step="slippageStep" :format="slippageFormat" :change="slippageChange"></ejs-numerictextbox>
             </v-flex>
         </v-layout>
         <!-- 주문수량 -->
@@ -273,7 +276,8 @@ export default class Option extends Vue {
     }
 
     private mounted() {
-        const commissionComboBox = this.$refs.commission as ComboBoxComponent;
+        const commissionComboBox = this.$refs
+            .commissionType as ComboBoxComponent;
         if (commissionComboBox != null) {
             commissionComboBox.ej2Instances.value = 'Ratio';
         }
@@ -373,6 +377,14 @@ export default class Option extends Vue {
     private analyzePortfolio() {
         const homeComponent = this.$parent.$parent as Home;
         homeComponent.analyzePortfolio();
+    }
+
+    private commissionChange(args: any) {
+        return this.$store.state.option.commission = args.value;
+    }
+
+    private slippageChange(args: any) {
+        return this.$store.state.option.slippage = args.value;
     }
 }
 </script>

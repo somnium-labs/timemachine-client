@@ -16,6 +16,7 @@
         "@mdi/font": "^2.6.95",
         "@syncfusion/ej2-vue-buttons": "^17.1.38",
         "@syncfusion/ej2-vue-calendars": "^17.1.38",
+        "@syncfusion/ej2-vue-charts": "^17.1.40",
         "@syncfusion/ej2-vue-dropdowns": "^17.1.38",
         "@syncfusion/ej2-vue-grids": "^17.1.38",
         "@syncfusion/ej2-vue-inplace-editor": "^17.1.38",

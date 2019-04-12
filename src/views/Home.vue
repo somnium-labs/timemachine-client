@@ -74,7 +74,6 @@ export default class Home extends Vue {
         const response = await portfolioComponent.analyzePortfolio();
 
         const reportComponent = this.$refs.report as Report;
-        console.log(response);
         reportComponent.CreateReport(response);
     }
 }

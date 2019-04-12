@@ -135,7 +135,7 @@ export default class Portfolio extends Vue {
                 benchmark: {
                     assetCode: this.$store.state.option.benchmark,
                     volume: 0,
-                    ratio: 0
+                    ratio: 1 // TODO: 옵션으로 뺴야 할듯
                 },
                 commissionType: this.$store.state.option.commissionType,
                 commission: this.$store.state.option.commission,
