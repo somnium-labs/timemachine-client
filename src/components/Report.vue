@@ -1,7 +1,7 @@
 <template>
     <div>
         <H3>Portfolio Analysis Results {{startDate}} {{endDate}}</H3>
-        <b-tabs content-class="mt-3">
+        <b-tabs>
             <b-tab title="Summary" active>
                 <ejs-grid
                     ref="grid"
@@ -58,33 +58,66 @@
                     </e-columns>
                 </ejs-grid>
                 <ejs-chart
-                    ref="chart"
-                    style="display:block;"
-                    :loaded="onChartLoad"
+                    ref="cumulativeReturnRatioChart"
+                    style="display:block"
+                    :zoomSettings="zoomSettings"
+                    :crosshair="crosshair"
+                    title="Cumulative Returns"
                     :primaryXAxis="primaryXAxis"
-                    :theme="theme"
-                >
-                    <e-series-collection>
-                        <e-series
-                            :dataSource="seriesData"
-                            :marker="marker"
-                            :xName="xName"
-                            :yName="yName"
-                            :animation="animation"
-                            type="Line"
-                        ></e-series>
-                    </e-series-collection>
-                </ejs-chart>
+                    :primaryYAxis="cumulativeReturnYAxis"
+                    :tooltip="tooltip"
+                    :chartArea="chartArea"
+                    :legendSettings="legendSettings"
+                    width="100%"
+                ></ejs-chart>
+                <ejs-chart
+                    ref="mddChart"
+                    style="display:block"
+                    :zoomSettings="zoomSettings"
+                    :crosshair="crosshair"
+                    title="MDD"
+                    :primaryXAxis="primaryXAxis"
+                    :primaryYAxis="mddYAxis"
+                    :tooltip="tooltip"
+                    :chartArea="chartArea"
+                    :legendSettings="legendSettings"
+                    width="100%"
+                ></ejs-chart>
+                <ejs-chart
+                    ref="totalBalanceChart"
+                    style="display:block"
+                    :zoomSettings="zoomSettings"
+                    :crosshair="crosshair"
+                    title="Total Balance"
+                    :primaryXAxis="primaryXAxis"
+                    :primaryYAxis="totalBalanceYAxis"
+                    :tooltip="tooltip"
+                    :chartArea="chartArea"
+                    :legendSettings="legendSettings"
+                    width="100%"
+                ></ejs-chart>
             </b-tab>
         </b-tabs>
     </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue, Provide, Inject } from 'vue-property-decorator';
+import { Browser } from '@syncfusion/ej2-base';
 import axios from 'axios';
 import { TS } from 'typescript-linq';
 import { SharedModel } from '../model/SharedModel';
+import {
+    ChartComponent,
+    ChartPlugin,
+    LineSeries,
+    Zoom,
+    Tooltip,
+    Crosshair,
+    Legend,
+    DateTime,
+    ScrollBar
+} from '@syncfusion/ej2-vue-charts';
 import {
     GridPlugin,
     GridComponent,
@@ -93,8 +126,6 @@ import {
     DetailRow
 } from '@syncfusion/ej2-vue-grids';
 import { TabPlugin, TabComponent } from '@syncfusion/ej2-vue-navigations';
-import { ChartPlugin, LineSeries, Legend } from "@syncfusion/ej2-vue-charts";
-
 
 Vue.use(TabPlugin);
 Vue.use(GridPlugin);
@@ -102,7 +133,24 @@ Vue.use(ChartPlugin);
 
 @Component({
     provide: {
-        grid: [DetailRow]
+        chart: [
+            LineSeries,
+            Legend,
+            Tooltip,
+            DateTime,
+            Zoom,
+            ScrollBar,
+            Crosshair
+        ],
+        grid: [
+            DetailRow,
+            LineSeries,
+            DateTime,
+            Legend,
+            ScrollBar,
+            Tooltip,
+            Crosshair
+        ]
     },
     props: {
         startDate: String,
@@ -112,7 +160,73 @@ Vue.use(ChartPlugin);
 export default class Report extends Vue {
     private summaryDetails: any[] = [];
 
-    public data() {
+    private primaryXAxis = {
+        valueType: 'DateTime',
+        labelFormat: 'yy-MM',
+        intervalType: 'Days',
+        edgeLabelPlacement: 'Shift',
+        majorGridLines: { width: 0 },
+        minimum: this.$store.state.option.startDate,
+        maximum: this.$store.state.option.endDate
+        // crosshairTooltip: { enable: true }
+    };
+    //Initializing Primary Y Axis
+    private cumulativeReturnYAxis = {
+        labelFormat: '{value}%',
+        rangePadding: 'None',
+        // minimum: 0,
+        // maximum: 100,
+        interval: 0.5,
+        lineStyle: { width: 0 },
+        majorTickLines: { width: 0 },
+        minorTickLines: { width: 0 }
+        // crosshairTooltip: { enable: true }
+    };
+
+    private mddYAxis = {
+        labelFormat: '{value}%',
+        rangePadding: 'None',
+        // minimum: 0,
+        // maximum: 100,
+        interval: 0.5,
+        lineStyle: { width: 0 },
+        majorTickLines: { width: 0 },
+        minorTickLines: { width: 0 }
+        // crosshairTooltip: { enable: true }
+    };
+
+    private totalBalanceYAxis = {
+        labelFormat: '{value}¥',
+        rangePadding: 'None',
+        minimum: 0,
+        // maximum: 100,
+        interval: 50000,
+        lineStyle: { width: 0 },
+        majorTickLines: { width: 0 },
+        minorTickLines: { width: 0 }
+        // crosshairTooltip: { enable: true }
+    };
+
+    private legendSettings = {
+        visible: true,
+        toggleVisibility: false,
+        position: 'Top',
+        height: '10%',
+        width: '100%',
+        textStyle: { size: 12, fontWeight: 'Bold' },
+        margin: { left: 10, top: 0 },
+        textOverflow: 'Wrap'
+    };
+
+    private zoomSettings = {
+        mode: 'X',
+        enableMouseWheelZooming: true,
+        enablePinchZooming: true,
+        enableSelectionZooming: true,
+        enableScrollbar: true
+    };
+
+    data() {
         return {
             parentData: [],
             childGrid: {
@@ -143,33 +257,97 @@ export default class Report extends Vue {
                     },
                     { field: 'mddRatio', headerText: 'MDD', format: 'P2' }
                 ]
-            }
+            },
+            crosshair: { enable: false },
+            chartArea: {
+                border: {
+                    width: 0
+                }
+            },
+            marker: {
+                visible: false,
+                height: 10,
+                width: 10
+            },
+            tooltip: {
+                enable: true
+                // format: '${point.x}: <b>${point.y}</b>'
+            },
+            title: 'Inflation - Consumer Price'
         };
     }
 
     public CreateReport(data: any) {
         const temp: any[] = [];
         const summaryDetails: any[] = [];
+        const cumulativeReturnRatioChartComponent = this.$refs
+            .cumulativeReturnRatioChart as ChartComponent;
+        const mddChartComponent = this.$refs.mddChart as ChartComponent;
+        const totalBalanceChartComponent = this.$refs
+            .totalBalanceChart as ChartComponent;
 
-        for (const k in data.data) {
-            const v = data.data[k];
+        const series1: any[] = [];
+        const series2: any[] = [];
+        const series3: any[] = [];
+
+        data.data.forEach((v: any) => {
             temp.push(v.summary);
 
             v.summary.summaryDetails.forEach((x: any) => {
                 summaryDetails.push(x);
             });
-        }
+
+            const data1 = {
+                type: 'Line',
+                name:
+                    v.summary.subjectType === '벤치마크'
+                        ? 'Benchmark'
+                        : v.summary.strategyType,
+                dataSource: v.records,
+                xName: 'date',
+                yName: 'cumulativeReturnRatio'
+            };
+            series1.push(data1);
+
+            const data2 = {
+                type: 'Line',
+                name:
+                    v.summary.subjectType === '벤치마크'
+                        ? 'Benchmark'
+                        : v.summary.strategyType,
+                dataSource: v.records,
+                xName: 'date',
+                yName: 'mdd'
+            };
+            series2.push(data2);
+
+            const data3 = {
+                type: 'Line',
+                name:
+                    v.summary.subjectType === '벤치마크'
+                        ? 'Benchmark'
+                        : v.summary.strategyType,
+                dataSource: v.records,
+                xName: 'date',
+                yName: 'totalBalance'
+            };
+            series3.push(data3);
+        });
+
+        cumulativeReturnRatioChartComponent.ej2Instances.addSeries(series1);
+        mddChartComponent.ej2Instances.addSeries(series2);
+        totalBalanceChartComponent.ej2Instances.addSeries(series3);
 
         const gridComponent = this.$refs.grid as GridComponent;
         gridComponent.ej2Instances.dataSource = temp;
         gridComponent.ej2Instances.childGrid.dataSource = summaryDetails;
 
-        console.log(summaryDetails);
+        // console.log(summaryDetails);
     }
 
     private onDataBound() {
         const gridComponent = this.$refs.grid as GridComponent;
-        gridComponent.ej2Instances.detailRowModule.expandAll();
+        // gridComponent.ej2Instances.detailRowModule.expandAll();
     }
 }
 </script>
