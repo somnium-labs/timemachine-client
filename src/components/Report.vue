@@ -167,17 +167,19 @@ export default class Report extends Vue {
         intervalType: 'Days',
         edgeLabelPlacement: 'Shift',
         majorGridLines: { width: 0 },
-        minimum: moment(this.$store.state.option.startDate as Date).add('month', -2).toDate(),
-        maximum: moment(this.$store.state.option.endDate as Date).add('month', 2).toDate()
+        minimum: moment(this.$store.state.option.startDate as Date)
+            .add('month', -2)
+            .toDate(),
+        maximum: moment(this.$store.state.option.endDate as Date)
+            .add('month', 2)
+            .toDate()
         // crosshairTooltip: { enable: true }
     };
 
     private cumulativeReturnYAxis = {
-        labelFormat: '{value}%',
+        labelFormat: 'p2',
         rangePadding: 'None',
-        // minimum: 0,
-        // maximum: 100,
-        interval: 0.5,
+        interval: 0.2,
         lineStyle: { width: 0 },
         majorTickLines: { width: 0 },
         minorTickLines: { width: 0 }
@@ -185,11 +187,11 @@ export default class Report extends Vue {
     };
 
     private mddYAxis = {
-        labelFormat: '{value}%',
+        labelFormat: 'p2',
         rangePadding: 'None',
-        // minimum: 0,
-        // maximum: 100,
-        interval: 0.5,
+        minimum: -1,
+        maximum: 0,
+        interval: 0.1,
         lineStyle: { width: 0 },
         majorTickLines: { width: 0 },
         minorTickLines: { width: 0 }
