@@ -6,7 +6,9 @@ import option from './modules/optionModule';
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-    state: {},
+    state: {
+        url: '',
+    },
     mutations: {},
     modules: {
         option,

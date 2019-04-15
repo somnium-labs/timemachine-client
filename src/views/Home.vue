@@ -52,6 +52,18 @@ export default class Home extends Vue {
     private target: string = '.home';
     private isShow: boolean = true;
 
+    public constructor() {
+        super();
+
+        if (process.env.NODE_ENV === 'development') {
+            console.log('development');
+            this.$store.state.url = 'https://localhost:5001';
+        } else {
+            console.log('production');
+            this.$store.state.url = 'http://10.78.202.110:5000';
+        }
+    }
+
     public toggleSidebar() {
         const sidebarComponent = this.$refs.sidebar as SidebarComponent;
 

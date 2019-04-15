@@ -126,6 +126,7 @@ import {
     DetailRow
 } from '@syncfusion/ej2-vue-grids';
 import { TabPlugin, TabComponent } from '@syncfusion/ej2-vue-navigations';
+import moment from 'moment';
 
 Vue.use(TabPlugin);
 Vue.use(GridPlugin);
@@ -166,11 +167,11 @@ export default class Report extends Vue {
         intervalType: 'Days',
         edgeLabelPlacement: 'Shift',
         majorGridLines: { width: 0 },
-        minimum: this.$store.state.option.startDate,
-        maximum: this.$store.state.option.endDate
+        minimum: moment(this.$store.state.option.startDate as Date).add('month', -2).toDate(),
+        maximum: moment(this.$store.state.option.endDate as Date).add('month', 2).toDate()
         // crosshairTooltip: { enable: true }
     };
-    //Initializing Primary Y Axis
+
     private cumulativeReturnYAxis = {
         labelFormat: '{value}%',
         rangePadding: 'None',
@@ -225,57 +226,6 @@ export default class Report extends Vue {
         enableSelectionZooming: true,
         enableScrollbar: true
     };
-
-    data() {
-        return {
-            parentData: [],
-            childGrid: {
-                dataSource: [],
-                queryString: 'relationalKey',
-                columns: [
-                    { field: 'assetName', headerText: 'Name' },
-                    { field: 'assetCode', headerText: 'Code' },
-                    {
-                        field: 'initialBalance',
-                        headerText: 'Initial Balance',
-                        format: '¥#,##'
-                    },
-                    {
-                        field: 'endBalance',
-                        headerText: 'Final Balance',
-                        format: '¥#,##'
-                    },
-                    {
-                        field: 'commission',
-                        headerText: 'Commission',
-                        format: '¥#,##.#'
-                    },
-                    {
-                        field: 'periodReturnRatio',
-                        headerText: 'Period Returns',
-                        format: 'P2'
-                    },
-                    { field: 'mddRatio', headerText: 'MDD', format: 'P2' }
-                ]
-            },
-            crosshair: { enable: false },
-            chartArea: {
-                border: {
-                    width: 0
-                }
-            },
-            marker: {
-                visible: false,
-                height: 10,
-                width: 10
-            },
-            tooltip: {
-                enable: true
-                // format: '${point.x}: <b>${point.y}</b>'
-            },
-            title: 'Inflation - Consumer Price'
-        };
-    }
 
     public CreateReport(data: any) {
         const temp: any[] = [];
@@ -334,6 +284,11 @@ export default class Report extends Vue {
             series3.push(data3);
         });
 
+        // clear
+        cumulativeReturnRatioChartComponent.ej2Instances.series = [];
+        mddChartComponent.ej2Instances.series = [];
+        totalBalanceChartComponent.ej2Instances.series = [];
+
         cumulativeReturnRatioChartComponent.ej2Instances.addSeries(series1);
         mddChartComponent.ej2Instances.addSeries(series2);
         totalBalanceChartComponent.ej2Instances.addSeries(series3);
@@ -343,6 +298,57 @@ export default class Report extends Vue {
         gridComponent.ej2Instances.childGrid.dataSource = summaryDetails;
 
         // console.log(summaryDetails);
+    }
+
+    private data() {
+        return {
+            parentData: [],
+            childGrid: {
+                dataSource: [],
+                queryString: 'relationalKey',
+                columns: [
+                    { field: 'assetName', headerText: 'Name' },
+                    { field: 'assetCode', headerText: 'Code' },
+                    {
+                        field: 'initialBalance',
+                        headerText: 'Initial Balance',
+                        format: '¥#,##'
+                    },
+                    {
+                        field: 'endBalance',
+                        headerText: 'Final Balance',
+                        format: '¥#,##'
+                    },
+                    {
+                        field: 'commission',
+                        headerText: 'Commission',
+                        format: '¥#,##.#'
+                    },
+                    {
+                        field: 'periodReturnRatio',
+                        headerText: 'Period Returns',
+                        format: 'P2'
+                    },
+                    { field: 'mddRatio', headerText: 'MDD', format: 'P2' }
+                ]
+            },
+            crosshair: { enable: false },
+            chartArea: {
+                border: {
+                    width: 0
+                }
+            },
+            marker: {
+                visible: false,
+                height: 10,
+                width: 10
+            },
+            tooltip: {
+                enable: true
+                // format: '${point.x}: <b>${point.y}</b>'
+            },
+            title: 'Inflation - Consumer Price'
+        };
     }
 
     private onDataBound() {

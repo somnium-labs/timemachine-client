@@ -102,7 +102,7 @@ export default class Universe extends Vue {
 
     public async created() {
         const result = await axios(
-            'https://localhost:5001/api/values/Universe'
+            `${this.$store.state.url}/api/values/Universe`
         );
         const data = result.data;
         const temp: any[] = [];

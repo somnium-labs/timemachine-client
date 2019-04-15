@@ -73,7 +73,7 @@ export default class Portfolio extends Vue {
         });
 
         const response = await axios({
-            url: 'https://localhost:5001/api/values/OpenPrice',
+            url: `${this.$store.state.url}/api/values/OpenPrice`,
             method: 'post',
             headers: { 'Content-Type': 'application/json' },
             data: {
@@ -86,21 +86,21 @@ export default class Portfolio extends Vue {
         const count = data.length + this.portfolio.count();
 
         data.forEach((x: any) => {
-            const ratio = 1 / count;
-            const price = x.openPrice;
-            const volume = (this.$store.state.option.capital * ratio) / price;
+            const newRatio = 1 / count;
+            const newPrice = x.openPrice;
+            const newVolume = (this.$store.state.option.capital * newRatio) / newPrice;
             const record = {
                 assetCode: x.assetCode,
                 assetName: x.assetName,
-                volume: volume,
-                ratio: ratio,
-                price: x.openPrice
+                volume: newVolume,
+                ratio: newRatio,
+                price: newPrice
             };
             this.addRecord(record);
         });
 
         const temp: any[] = [];
-        this.portfolio.forEach(x => {
+        this.portfolio.forEach((x: any) => {
             x.value.ratio = 1 / count;
             x.value.volume =
                 (this.$store.state.option.capital * x.value.ratio) /
@@ -124,7 +124,7 @@ export default class Portfolio extends Vue {
         });
 
         const result = await axios({
-            url: 'https://localhost:5001/api/values/AnalyzePortfolio',
+            url: `${this.$store.state.url}/api/values/AnalyzePortfolio`,
             method: 'post',
             headers: { 'Content-Type': 'application/json' },
             data: {
