@@ -5,7 +5,7 @@
                 <h6 style="margin-top: 0.28em">Start Date</h6>
             </v-flex>
             <v-flex xs6>
-                <ejs-datepicker :value="startDate" :format="dateFormat"></ejs-datepicker>
+                <ejs-datepicker id="startDate" :value="startDate" :format="dateFormat" :change=change></ejs-datepicker>
             </v-flex>
         </v-layout>
         <!-- 종료날짜 -->
@@ -14,7 +14,7 @@
                 <h6 style="margin-top: 0.28em">End Date</h6>
             </v-flex>
             <v-flex xs6>
-                <ejs-datepicker :value="endDate" :format="dateFormat"></ejs-datepicker>
+                <ejs-datepicker id="endDate" :value="endDate" :format="dateFormat" :change=change></ejs-datepicker>
             </v-flex>
         </v-layout>
         <!-- 자산 -->
@@ -351,6 +351,10 @@ export default class Option extends Vue {
         } else if (args.element.id === 'benchmark') {
             this.$store.state.option.benchmark =
                 args.itemData != null ? args.itemData.value : '';
+        } else if (args.element.id === 'startDate') {
+            this.startDate = args.element.value;
+        } else if (args.element.id === 'endDate') {
+            this.endDate = args.element.value;
         }
     }
 
