@@ -23,7 +23,7 @@
                 <h6 style="margin-top: 0.28em">Capital</h6>
             </v-flex>
             <v-flex xs6>
-                <ejs-numerictextbox :value="capital" :step="capitalStep" format="¥#,##"></ejs-numerictextbox>
+                <ejs-numerictextbox :value="capital" :step="capitalStep" format="¥#,##" :change="capitalChange"></ejs-numerictextbox>
             </v-flex>
         </v-layout>
         <!-- 수수료 타입 -->
@@ -384,11 +384,15 @@ export default class Option extends Vue {
     }
 
     private commissionChange(args: any) {
-        return this.$store.state.option.commission = args.value;
+        this.commission = args.value;
+    }
+
+    private capitalChange(args: any) {
+        this.capital = args.value;
     }
 
     private slippageChange(args: any) {
-        return this.$store.state.option.slippage = args.value;
+        this.slippage = args.value;
     }
 }
 </script>
