@@ -88,7 +88,8 @@ export default class Portfolio extends Vue {
         data.forEach((x: any) => {
             const newRatio = 1 / count;
             const newPrice = x.openPrice;
-            const newVolume = (this.$store.state.option.capital * newRatio) / newPrice;
+            const newVolume =
+                (this.$store.state.option.capital * newRatio) / newPrice;
             const record = {
                 assetCode: x.assetCode,
                 assetName: x.assetName,
@@ -99,17 +100,17 @@ export default class Portfolio extends Vue {
             this.addRecord(record);
         });
 
-        const temp: any[] = [];
-        this.portfolio.forEach((x: any) => {
-            x.value.ratio = 1 / count;
-            x.value.volume =
-                (this.$store.state.option.capital * x.value.ratio) /
-                x.value.price;
+        // const temp: any[] = [];
+        // this.portfolio.forEach((x: any) => {
+        //     x.value.ratio = 1 / count;
+        //     x.value.volume =
+        //         (this.$store.state.option.capital * x.value.ratio) /
+        //         x.value.price;
 
-            temp.push(x.value);
-        });
+        //     temp.push(x.value);
+        // });
 
-        this.data = temp;
+        // this.data = temp;
     }
 
     public async analyzePortfolio() {
@@ -155,8 +156,6 @@ export default class Portfolio extends Vue {
     }
 
     private addRecord(record: any) {
-        // const gridComponent = this.$refs.portfolioComponent as GridComponent;
-        // gridComponent.addRecord(record);
         this.portfolio.add(record.assetCode, {
             assetCode: record.assetCode,
             assetName: record.assetName,
@@ -164,6 +163,8 @@ export default class Portfolio extends Vue {
             ratio: record.ratio,
             price: record.price
         });
+
+        this.refreshPortfolio();
     }
 
     private removeRecord() {
@@ -173,6 +174,22 @@ export default class Portfolio extends Vue {
         selectedrecords.forEach((subject: SharedModel.Subject) => {
             this.portfolio.remove(subject.assetCode);
         });
+
+        this.refreshPortfolio();
+    }
+
+    private refreshPortfolio() {
+        const temp: any[] = [];
+        this.portfolio.forEach((x: any) => {
+            x.value.ratio = 1 / this.portfolio.count();
+            x.value.volume =
+                (this.$store.state.option.capital * x.value.ratio) /
+                x.value.price;
+
+            temp.push(x.value);
+        });
+
+        this.data = temp;
     }
 
     private async contextMenuClick(args: any) {
