@@ -389,6 +389,9 @@ export default class Option extends Vue {
 
     private capitalChange(args: any) {
         this.capital = args.value;
+
+        const homeComponent = this.$parent.$parent as Home;
+        homeComponent.refreshPortfolio();
     }
 
     private slippageChange(args: any) {

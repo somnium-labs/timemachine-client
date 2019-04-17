@@ -155,6 +155,20 @@ export default class Portfolio extends Vue {
         return result;
     }
 
+    public refreshPortfolio() {
+        const temp: any[] = [];
+        this.portfolio.forEach((x: any) => {
+            x.value.ratio = 1 / this.portfolio.count();
+            x.value.volume =
+                (this.$store.state.option.capital * x.value.ratio) /
+                x.value.price;
+
+            temp.push(x.value);
+        });
+
+        this.data = temp;
+    }
+
     private addRecord(record: any) {
         this.portfolio.add(record.assetCode, {
             assetCode: record.assetCode,
@@ -176,20 +190,6 @@ export default class Portfolio extends Vue {
         });
 
         this.refreshPortfolio();
-    }
-
-    private refreshPortfolio() {
-        const temp: any[] = [];
-        this.portfolio.forEach((x: any) => {
-            x.value.ratio = 1 / this.portfolio.count();
-            x.value.volume =
-                (this.$store.state.option.capital * x.value.ratio) /
-                x.value.price;
-
-            temp.push(x.value);
-        });
-
-        this.data = temp;
     }
 
     private async contextMenuClick(args: any) {

@@ -88,5 +88,10 @@ export default class Home extends Vue {
         const reportComponent = this.$refs.report as Report;
         reportComponent.CreateReport(response);
     }
+
+    public async refreshPortfolio() {
+        const portfolioComponent = this.$refs.portfolio as Portfolio;
+        portfolioComponent.refreshPortfolio();
+    }
 }
 </script>
