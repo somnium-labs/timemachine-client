@@ -331,7 +331,21 @@ export default class Report extends Vue {
                         headerText: 'Period Returns',
                         format: 'P2'
                     },
-                    { field: 'mddRatio', headerText: 'MDD', format: 'P2' }
+                    {
+                        field: 'annualReturn',
+                        headerText: 'Annual Returns',
+                        format: 'P2'
+                    },
+                    {
+                        field: 'volatility',
+                        headerText: 'Volatility',
+                        format: 'P2'
+                    },
+                    { field: 'mddRatio', headerText: 'MDD', format: 'P2' },
+                    {
+                        field: 'sharpeRatio',
+                        headerText: 'Sharpe Ratio'
+                    },
                 ]
             },
             crosshair: { enable: false },
