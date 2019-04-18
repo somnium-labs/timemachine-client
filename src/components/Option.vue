@@ -1,11 +1,16 @@
 <template>
-    <v-container fluid>
+    <v-container py-0 pl-5>
         <v-layout row wrap>
             <v-flex xs6>
                 <h6 style="margin-top: 0.28em">Start Date</h6>
             </v-flex>
-            <v-flex xs6>
-                <ejs-datepicker id="startDate" :value="startDate" :format="dateFormat" :change=change></ejs-datepicker>
+            <v-flex xs4>
+                <ejs-datepicker
+                    id="startDate"
+                    :value="startDate"
+                    :format="dateFormat"
+                    :change="change"
+                ></ejs-datepicker>
             </v-flex>
         </v-layout>
         <!-- 종료날짜 -->
@@ -13,8 +18,8 @@
             <v-flex xs6>
                 <h6 style="margin-top: 0.28em">End Date</h6>
             </v-flex>
-            <v-flex xs6>
-                <ejs-datepicker id="endDate" :value="endDate" :format="dateFormat" :change=change></ejs-datepicker>
+            <v-flex xs4>
+                <ejs-datepicker id="endDate" :value="endDate" :format="dateFormat" :change="change"></ejs-datepicker>
             </v-flex>
         </v-layout>
         <!-- 자산 -->
@@ -22,8 +27,13 @@
             <v-flex xs6>
                 <h6 style="margin-top: 0.28em">Capital</h6>
             </v-flex>
-            <v-flex xs6>
-                <ejs-numerictextbox :value="capital" :step="capitalStep" format="¥#,##" :change="capitalChange"></ejs-numerictextbox>
+            <v-flex xs4>
+                <ejs-numerictextbox
+                    :value="capital"
+                    :step="capitalStep"
+                    format="¥#,##"
+                    :change="capitalChange"
+                ></ejs-numerictextbox>
             </v-flex>
         </v-layout>
         <!-- 수수료 타입 -->
@@ -31,7 +41,7 @@
             <v-flex xs6>
                 <h6 style="margin-top: 0.28em">Commission</h6>
             </v-flex>
-            <v-flex xs6>
+            <v-flex xs4>
                 <ejs-combobox
                     ref="commissionType"
                     id="commissionType"
@@ -46,7 +56,7 @@
             <v-flex xs6>
                 <!-- empty -->
             </v-flex>
-            <v-flex xs6>
+            <v-flex xs4>
                 <ejs-numerictextbox
                     ref="commission"
                     id="commission"
@@ -62,7 +72,7 @@
             <v-flex xs6>
                 <h6 style="margin-top: 0.28em">Slippage</h6>
             </v-flex>
-            <v-flex xs6>
+            <v-flex xs4>
                 <ejs-combobox
                     ref="slippage"
                     id="slippageType"
@@ -77,8 +87,13 @@
             <v-flex xs6>
                 <!-- empty -->
             </v-flex>
-            <v-flex xs6>
-                <ejs-numerictextbox :value="slippage" :step="slippageStep" :format="slippageFormat" :change="slippageChange"></ejs-numerictextbox>
+            <v-flex xs4>
+                <ejs-numerictextbox
+                    :value="slippage"
+                    :step="slippageStep"
+                    :format="slippageFormat"
+                    :change="slippageChange"
+                ></ejs-numerictextbox>
             </v-flex>
         </v-layout>
         <!-- 주문수량 -->
@@ -86,7 +101,7 @@
             <v-flex xs6>
                 <h6 style="margin-top: 0.28em">Order Volume</h6>
             </v-flex>
-            <v-flex xs6>
+            <v-flex xs4>
                 <ejs-combobox
                     ref="orderVolume"
                     id="orderVolumeType"
@@ -100,7 +115,7 @@
             <v-flex xs6>
                 <!-- empty -->
             </v-flex>
-            <v-flex xs6>
+            <v-flex xs4>
                 <ejs-checkbox
                     ref="leverage"
                     class="e-checkbox-wrapper"
@@ -114,7 +129,7 @@
             <v-flex xs6>
                 <h6 style="margin-top: 0.28em">Leverage</h6>
             </v-flex>
-            <v-flex xs6>
+            <v-flex xs4>
                 <ejs-checkbox ref="leverage" class="e-checkbox-wrapper" :change="toggleLeverage"></ejs-checkbox>
             </v-flex>
         </v-layout>
@@ -123,7 +138,7 @@
             <v-flex xs6>
                 <h6 style="margin-top: 0.28em">Benchmark</h6>
             </v-flex>
-            <v-flex xs6>
+            <v-flex xs4>
                 <ejs-combobox
                     ref="benchmark"
                     id="benchmark"
@@ -132,7 +147,9 @@
                     :change="change"
                 ></ejs-combobox>
             </v-flex>
-            <!-- Buy And Hold -->
+        </v-layout>
+        <!-- Buy And Hold -->
+        <v-layout row wrap>
             <v-flex xs6>
                 <h6 style="margin-top: 0.28em">Buy And Hold</h6>
             </v-flex>
@@ -144,11 +161,13 @@
                     :change="toggleBuyAndHold"
                 ></ejs-checkbox>
             </v-flex>
-            <!-- Volatility Breakout -->
+        </v-layout>
+        <!-- Volatility Breakout -->
+        <v-layout row wrap>
             <v-flex xs6>
                 <h6 style="margin-top: 0.28em">Volatility Breakout</h6>
             </v-flex>
-            <v-flex xs6>
+            <v-flex xs4>
                 <ejs-checkbox
                     ref="volatilityBreakout"
                     class="e-checkbox-wrapper"
@@ -156,11 +175,13 @@
                     :change="toggleVolatilityBreakout"
                 ></ejs-checkbox>
             </v-flex>
-            <!-- Moving Average -->
+        </v-layout>
+        <!-- Moving Average -->
+        <v-layout row wrap>
             <v-flex xs6>
                 <h6 style="margin-top: 0.28em">Moving Average</h6>
             </v-flex>
-            <v-flex xs6>
+            <v-flex xs4>
                 <ejs-checkbox
                     ref="movingAverage"
                     class="e-checkbox-wrapper"
@@ -256,6 +277,14 @@ export default class Option extends Vue {
         this.$store.state.option.slippage = slippage;
     }
 
+    private get benchmark() {
+        return this.$store.state.option.benchmark;
+    }
+
+    private set benchmark(assetCode: string) {
+        this.$store.state.option.benchmark = assetCode;
+    }
+
     private created() {
         this.$store.state.option = {
             startDate: '2010-01-01',
@@ -263,9 +292,9 @@ export default class Option extends Vue {
             capital: 100000,
             benchmark: '',
             commissionType: '',
-            commission: 0.0003,
+            commission: 0.0000,
             slippageType: '',
-            slippage: 0.0001,
+            slippage: 0.0000,
             tradeType: '',
             useOutstandingBalance: true,
             usePointVolume: false,
@@ -327,7 +356,7 @@ export default class Option extends Vue {
             if (this.$store.state.option.commissionType === 'Ratio') {
                 this.commissionFormat = 'P2';
                 this.commissionStep = 0.0001;
-                this.$store.state.option.commission = 0.0003;
+                this.$store.state.option.commission = 0.0000;
             } else {
                 this.commissionFormat = '¥###.##';
                 this.commissionStep = 1;
@@ -339,7 +368,7 @@ export default class Option extends Vue {
             if (this.$store.state.option.slippageType === 'Ratio') {
                 this.slippageFormat = 'P2';
                 this.slippageStep = 0.0001;
-                this.$store.state.option.slippage = 0.0001;
+                this.$store.state.option.slippage = 0.0000;
             } else {
                 this.slippageFormat = '¥###.##';
                 this.slippageStep = 1;
@@ -349,10 +378,13 @@ export default class Option extends Vue {
             this.$store.state.option.tradeType =
                 args.itemData != null ? args.itemData.value : '';
         } else if (args.element.id === 'benchmark') {
-            this.$store.state.option.benchmark =
-                args.itemData != null ? args.itemData.value : '';
+            this.benchmark = args.itemData != null ? args.itemData.value : '';
+            const homeComponent = this.$parent as Home;
+            homeComponent.setBenchmark(this.benchmark);
         } else if (args.element.id === 'startDate') {
             this.startDate = args.element.value;
+            const homeComponent = this.$parent as Home;
+            homeComponent.onChangeStartDate(this.startDate);
         } else if (args.element.id === 'endDate') {
             this.endDate = args.element.value;
         }
@@ -379,7 +411,7 @@ export default class Option extends Vue {
     }
 
     private analyzePortfolio() {
-        const homeComponent = this.$parent.$parent as Home;
+        const homeComponent = this.$parent as Home;
         homeComponent.analyzePortfolio();
     }
 
@@ -390,7 +422,7 @@ export default class Option extends Vue {
     private capitalChange(args: any) {
         this.capital = args.value;
 
-        const homeComponent = this.$parent.$parent as Home;
+        const homeComponent = this.$parent as Home;
         homeComponent.refreshPortfolio();
     }
 

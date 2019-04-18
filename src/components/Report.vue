@@ -1,5 +1,7 @@
 <template>
     <div>
+        <br>
+        <br>
         <H3>Portfolio Analysis Results {{startDate}} {{endDate}}</H3>
         <b-tabs>
             <b-tab title="Summary" active>
@@ -57,6 +59,9 @@
                         ></e-column>
                     </e-columns>
                 </ejs-grid>
+                <br>
+                <br>
+                <br>
                 <ejs-chart
                     ref="cumulativeReturnRatioChart"
                     style="display:block"
@@ -70,6 +75,9 @@
                     :legendSettings="legendSettings"
                     width="100%"
                 ></ejs-chart>
+                <br>
+                <br>
+                <br>
                 <ejs-chart
                     ref="mddChart"
                     style="display:block"
@@ -83,6 +91,9 @@
                     :legendSettings="legendSettings"
                     width="100%"
                 ></ejs-chart>
+                <br>
+                <br>
+                <br>
                 <ejs-chart
                     ref="totalBalanceChart"
                     style="display:block"
@@ -166,7 +177,7 @@ export default class Report extends Vue {
         labelFormat: 'yy-MM',
         intervalType: 'Days',
         edgeLabelPlacement: 'Shift',
-        majorGridLines: { width: 0 },
+        majorGridLines: { width: 0 }
         // minimum: moment(this.$store.state.option.startDate as Date)
         //     .add('month', -2)
         //     .toDate(),
@@ -345,7 +356,7 @@ export default class Report extends Vue {
                     {
                         field: 'sharpeRatio',
                         headerText: 'Sharpe Ratio'
-                    },
+                    }
                 ]
             },
             crosshair: { enable: false },

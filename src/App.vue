@@ -1,5 +1,6 @@
 <template>
     <v-app>
+        <!--
         <v-toolbar>
             <v-toolbar-side-icon @click="toggleSidebar"></v-toolbar-side-icon>
             <v-toolbar-title>TimeMachine</v-toolbar-title>
@@ -8,6 +9,7 @@
                 <v-btn flat to="/">Setting</v-btn>
             </v-toolbar-items>
         </v-toolbar>
+        -->
         <v-content>
             <router-view ref="routerComponent"/>
         </v-content>

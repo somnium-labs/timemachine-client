@@ -1,6 +1,7 @@
 <template>
     <div>
-        <H3>Portfolio</H3>
+        <br>
+        <H3>{{title}}</H3>
         <ejs-grid
             ref="portfolioComponent"
             :dataSource="data"
@@ -43,10 +44,15 @@ Vue.use(GridPlugin);
 @Component({
     provide: {
         grid: [Edit, ContextMenu]
+    },
+    props: {
+        title: String
     }
 })
 export default class Portfolio extends Vue {
     private data: any[] = [];
+
+    // key: asset code
     private portfolio: TS.Collections.Dictionary<
         string,
         any
@@ -93,27 +99,20 @@ export default class Portfolio extends Vue {
             const record = {
                 assetCode: x.assetCode,
                 assetName: x.assetName,
+                exchange: x.exchange,
                 volume: newVolume,
                 ratio: newRatio,
                 price: newPrice
             };
             this.addRecord(record);
         });
-
-        // const temp: any[] = [];
-        // this.portfolio.forEach((x: any) => {
-        //     x.value.ratio = 1 / count;
-        //     x.value.volume =
-        //         (this.$store.state.option.capital * x.value.ratio) /
-        //         x.value.price;
-
-        //     temp.push(x.value);
-        // });
-
-        // this.data = temp;
     }
 
-    public async analyzePortfolio() {
+    public getBenchmark() {
+        return this.portfolio.first().value;
+    }
+
+    public async analyzePortfolio(benchmark: any) {
         const assetInfo: any[] = [];
         this.portfolio.forEach((x: any) => {
             const asset = {
@@ -134,9 +133,9 @@ export default class Portfolio extends Vue {
                 endDate: this.$store.state.option.endDate,
                 capital: this.$store.state.option.capital,
                 benchmark: {
-                    assetCode: this.$store.state.option.benchmark,
-                    volume: 0,
-                    ratio: 1 // TODO: 옵션으로 뺴야 할듯
+                    assetCode: benchmark.assetCode, // this.$store.state.option.benchmark,
+                    volume: benchmark.volume,
+                    ratio: benchmark.ratio,
                 },
                 commissionType: this.$store.state.option.commissionType,
                 commission: this.$store.state.option.commission,
@@ -155,6 +154,34 @@ export default class Portfolio extends Vue {
         return result;
     }
 
+    public async onChangeStartDate(date: string) {
+        const assetInfo: any[] = [];
+        this.portfolio.forEach((x: any) => {
+            const asset = {
+                assetCode: x.value.assetCode,
+                exchange: x.value.exchange
+            };
+            assetInfo.push(asset);
+        });
+
+        const response = await axios({
+            url: `${this.$store.state.url}/api/values/OpenPrice`,
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' },
+            data: {
+                assets: assetInfo,
+                startDate: date
+            }
+        });
+
+        const data = response.data.data;
+        data.forEach((x: any) => {
+            this.portfolio.getValue(x.assetCode).price = x.openPrice;
+        });
+
+        this.refreshPortfolio();
+    }
+
     public refreshPortfolio() {
         const temp: any[] = [];
         this.portfolio.forEach((x: any) => {
@@ -162,10 +189,8 @@ export default class Portfolio extends Vue {
             x.value.volume =
                 (this.$store.state.option.capital * x.value.ratio) /
                 x.value.price;
-
             temp.push(x.value);
         });
-
         this.data = temp;
     }
 
@@ -173,6 +198,7 @@ export default class Portfolio extends Vue {
         this.portfolio.add(record.assetCode, {
             assetCode: record.assetCode,
             assetName: record.assetName,
+            exchange: record.exchange,
             volume: record.volume,
             ratio: record.ratio,
             price: record.price

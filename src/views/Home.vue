@@ -1,25 +1,44 @@
 <template>
-    <v-container fluid class="home">
-        <v-container fluid>
-            <ejs-sidebar id="option-sidebar" ref="sidebar" type="Auto" width="300" :target="target">
+    <v-container fluid>
+        <v-layout row wrap>
+            <v-flex xs2>
                 <Option/>
-            </ejs-sidebar>
-            <v-layout row wrap>
-                <v-flex xs12>
-                    <Universe class="universe"/>
-                </v-flex>
-            </v-layout>
-            <v-layout row wrap>
-                <v-flex xs6>
-                    <Portfolio ref="portfolio"/>
-                </v-flex>
-            </v-layout>
-            <v-layout row wrap>
-                <v-flex xs8>
-                    <Report startDate endDate ref="report"/>
-                </v-flex>
-            </v-layout>
-        </v-container>
+            </v-flex>
+            <v-flex xs10>
+                <v-layout row wrap>
+                    <v-flex>
+                        <Universe class="universe"/>
+                    </v-flex>
+                </v-layout>
+                <v-layout row wrap>
+                    <v-flex xs6>
+                        <Portfolio ref="portfolio" title="Portfolio"/>
+                    </v-flex>
+                    <v-flex xs6>
+                        <Portfolio ref="benchmark" title="Benchmark"/>
+                    </v-flex>
+                </v-layout>
+                <v-layout row wrap>
+                    <v-flex xs12>
+                        <Report startDate endDate ref="report"/>
+                    </v-flex>
+                </v-layout>
+            </v-flex>
+        </v-layout>
+
+        <v-snackbar
+            v-model="snackbar"
+            :bottom="y === 'bottom'"
+            :left="x === 'left'"
+            :multi-line="mode === 'multi-line'"
+            :right="x === 'right'"
+            :timeout="timeout"
+            :top="y === 'top'"
+            :vertical="mode === 'vertical'"
+        >
+            {{ text }}
+            <v-btn color="pink" flat @click="snackbar = false">Close</v-btn>
+        </v-snackbar>
     </v-container>
 </template>
 
@@ -51,6 +70,7 @@ Vue.use(SidebarPlugin);
 export default class Home extends Vue {
     private target: string = '.home';
     private isShow: boolean = true;
+    private snackbar: boolean = false;
 
     public constructor() {
         super();
@@ -62,6 +82,16 @@ export default class Home extends Vue {
             console.log('production');
             this.$store.state.url = 'http://10.78.202.110:5000';
         }
+    }
+
+    public data() {
+        return {
+            x: null,
+            y: 'top',
+            mode: '',
+            timeout: 10000,
+            text: 'Portfolio analysis is complete.'
+        };
     }
 
     public toggleSidebar() {
@@ -81,17 +111,50 @@ export default class Home extends Vue {
         portfolioComponent.addPortfolio(universe);
     }
 
+    public setBenchmark(benchmark: string) {
+        const universe: SharedModel.Subject[] = [];
+        universe.push({
+            assetCode: benchmark,
+            exchange: 'INDEX',
+            // interface 제약때문에 dummy
+            assetName: '',
+            sector: '',
+            industry: '',
+            marketCap: 0,
+            evEvitda: 0,
+            divYield: 0
+        });
+
+        const portfolioComponent = this.$refs.benchmark as Portfolio;
+        portfolioComponent.addPortfolio(universe);
+    }
+
     public async analyzePortfolio() {
         const portfolioComponent = this.$refs.portfolio as Portfolio;
-        const response = await portfolioComponent.analyzePortfolio();
+        const benchmarkComponent = this.$refs.benchmark as Portfolio;
+        const benchmark = benchmarkComponent.getBenchmark();
+        const response = await portfolioComponent.analyzePortfolio(benchmark);
 
         const reportComponent = this.$refs.report as Report;
         reportComponent.CreateReport(response);
+
+        this.snackbar = true;
     }
 
     public async refreshPortfolio() {
         const portfolioComponent = this.$refs.portfolio as Portfolio;
         portfolioComponent.refreshPortfolio();
+
+        const benchmarkComponent = this.$refs.benchmark as Portfolio;
+        benchmarkComponent.refreshPortfolio();
+    }
+
+    public async onChangeStartDate(date: string) {
+        const portfolioComponent = this.$refs.portfolio as Portfolio;
+        portfolioComponent.onChangeStartDate(date);
+
+        const benchmarkComponent = this.$refs.benchmark as Portfolio;
+        benchmarkComponent.onChangeStartDate(date);
     }
 }
 </script>
