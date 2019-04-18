@@ -73,6 +73,7 @@
                     :tooltip="tooltip"
                     :chartArea="chartArea"
                     :legendSettings="legendSettings"
+                    :theme="theme"
                     width="100%"
                 ></ejs-chart>
                 <br>
@@ -89,6 +90,7 @@
                     :tooltip="tooltip"
                     :chartArea="chartArea"
                     :legendSettings="legendSettings"
+                    :theme="theme"
                     width="100%"
                 ></ejs-chart>
                 <br>
@@ -105,6 +107,7 @@
                     :tooltip="tooltip"
                     :chartArea="chartArea"
                     :legendSettings="legendSettings"
+                    :theme="theme"
                     width="100%"
                 ></ejs-chart>
             </b-tab>
@@ -171,6 +174,7 @@ Vue.use(ChartPlugin);
 })
 export default class Report extends Vue {
     private summaryDetails: any[] = [];
+    private theme: string = 'Bootstrap'; // fabric, Material, HighContrast, Bootstrapv4
 
     private primaryXAxis = {
         valueType: 'DateTime',
@@ -268,7 +272,8 @@ export default class Report extends Vue {
                         : v.summary.strategyType,
                 dataSource: v.records,
                 xName: 'date',
-                yName: 'cumulativeReturnRatio'
+                yName: 'cumulativeReturnRatio',
+                legendShape: 'Circle'
             };
             series1.push(data1);
 
@@ -280,7 +285,8 @@ export default class Report extends Vue {
                         : v.summary.strategyType,
                 dataSource: v.records,
                 xName: 'date',
-                yName: 'mdd'
+                yName: 'mdd',
+                legendShape: 'Circle'
             };
             series2.push(data2);
 
@@ -292,7 +298,8 @@ export default class Report extends Vue {
                         : v.summary.strategyType,
                 dataSource: v.records,
                 xName: 'date',
-                yName: 'totalBalance'
+                yName: 'totalBalance',
+                legendShape: 'Circle'
             };
             series3.push(data3);
         });

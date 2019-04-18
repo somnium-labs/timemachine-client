@@ -89,7 +89,7 @@ export default class Home extends Vue {
             x: null,
             y: 'top',
             mode: '',
-            timeout: 10000,
+            timeout: 5000,
             text: 'Portfolio analysis is complete.'
         };
     }
