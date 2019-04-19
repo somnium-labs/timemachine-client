@@ -1,70 +1,78 @@
 <template>
     <v-container py-0 pl-4>
-        <div class="center-align">
-            <div class="mt-3">
-                <b-button-group>
-                    <!-- load -->
-                    <v-dialog v-model="loadDialog" persistent max-width="600px">
-                        <template v-slot:activator="{ on }">
-                            <b-button variant="success" v-on="on">Load</b-button>
-                        </template>
-                        <v-card>
-                            <v-card-title>
-                                <span class="headline">Load Setting</span>
-                            </v-card-title>
-                            <v-card-text>
-                                <v-container grid-list-md>
-                                    <v-layout wrap>
-                                        <v-flex xs12>
-                                            <v-select
-                                                v-model="settingName"
-                                                :items="localSettingsNames"
-                                                label="Select Setting"
-                                            ></v-select>
-                                        </v-flex>
-                                    </v-layout>
-                                </v-container>
-                            </v-card-text>
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn color="blue darken-1" flat @click="cancelLoad">Close</v-btn>
-                                <v-btn color="blue darken-1" flat @click="loadOption">Load</v-btn>
-                            </v-card-actions>
-                        </v-card>
-                    </v-dialog>
-                    <b-button variant="warning" @click="resetOption" :disabled="saveDisabled">Save</b-button>
-                    <!-- save -->
-                    <v-dialog v-model="saveDialog" persistent max-width="600px">
-                        <template v-slot:activator="{ on }">
-                            <b-button variant="info" v-on="on">Save As</b-button>
-                        </template>
-                        <v-card>
-                            <v-card-title>
-                                <span class="headline">Save Setting</span>
-                            </v-card-title>
-                            <v-card-text>
-                                <v-container grid-list-md>
-                                    <v-layout wrap>
-                                        <v-flex xs12>
-                                            <v-text-field
-                                                v-model="settingName"
-                                                label="Setting Name*"
-                                                required
-                                            ></v-text-field>
-                                        </v-flex>
-                                    </v-layout>
-                                </v-container>
-                            </v-card-text>
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn color="blue darken-1" flat @click="cancelSave">Close</v-btn>
-                                <v-btn color="blue darken-1" flat @click="saveOption">Save</v-btn>
-                            </v-card-actions>
-                        </v-card>
-                    </v-dialog>
-                </b-button-group>
-            </div>
-        </div>
+        <v-layout row wrap>
+            <v-flex xs6>
+                <div class="mt-3">
+                    <b-button-group>
+                        <!-- load -->
+                        <v-dialog v-model="loadDialog" persistent max-width="600px">
+                            <template v-slot:activator="{ on }">
+                                <b-button variant="outline-success" v-on="on">Load</b-button>
+                            </template>
+                            <v-card>
+                                <v-card-title>
+                                    <span class="headline">Load Setting</span>
+                                </v-card-title>
+                                <v-card-text>
+                                    <v-container grid-list-md>
+                                        <v-layout wrap>
+                                            <v-flex xs12>
+                                                <v-select
+                                                    v-model="settingName"
+                                                    :items="localSettingsNames"
+                                                    label="Select Setting"
+                                                ></v-select>
+                                            </v-flex>
+                                        </v-layout>
+                                    </v-container>
+                                </v-card-text>
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn color="blue darken-1" flat @click="cancelLoad">Close</v-btn>
+                                    <v-btn color="blue darken-1" flat @click="loadOption">Load</v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
+                        <!-- save -->
+                        <v-dialog v-model="saveDialog" persistent max-width="600px">
+                            <template v-slot:activator="{ on }">
+                                <b-button variant="outline-primary" v-on="on">Save As</b-button>
+                            </template>
+                            <v-card>
+                                <v-card-title>
+                                    <span class="headline">Save Setting</span>
+                                </v-card-title>
+                                <v-card-text>
+                                    <v-container grid-list-md>
+                                        <v-layout wrap>
+                                            <v-flex xs12>
+                                                <v-text-field
+                                                    v-model="settingName"
+                                                    label="Setting Name*"
+                                                    required
+                                                ></v-text-field>
+                                            </v-flex>
+                                        </v-layout>
+                                    </v-container>
+                                </v-card-text>
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn color="blue darken-1" flat @click="cancelSave">Close</v-btn>
+                                    <v-btn color="blue darken-1" flat @click="saveOption">Save</v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
+                        <b-button
+                            variant="outline-danger"
+                            @click="resetOption"
+                            :disabled="saveDisabled"
+                        >Save</b-button>
+                    </b-button-group>
+                </div>
+            </v-flex>
+            <v-flex xs6></v-flex>
+        </v-layout>
+        <br>
         <v-layout row wrap>
             <v-flex xs6>
                 <h6 style="margin-top: 0.28em">Start Date</h6>
