@@ -64,7 +64,7 @@
                         </v-dialog>
                         <b-button
                             variant="outline-danger"
-                            @click="resetOption"
+                            @click="saveOption"
                             :disabled="saveDisabled"
                         >Save</b-button>
                     </b-button-group>
@@ -631,10 +631,10 @@ export default class Option extends Vue {
         this.saveDisabled = false;
     }
 
-    private resetOption() {
-        this.updateOptionUI(this.defaultOption);
-        this.updateOptionData(this.defaultOption);
-    }
+    // private saveOption() {
+    //     this.updateOptionUI(this.defaultOption);
+    //     this.updateOptionData(this.defaultOption);
+    // }
 
     private updateOptionData(option: SharedModel.TradeOption) {
         this.$store.state.option = {

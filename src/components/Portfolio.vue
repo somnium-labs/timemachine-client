@@ -2,6 +2,73 @@
     <div>
         <br>
         <H3>{{title}}</H3>
+        <div class="mt-3">
+            <b-button-group>
+                <!-- load -->
+                <v-dialog v-model="loadDialog" persistent max-width="600px">
+                    <template v-slot:activator="{ on }">
+                        <b-button variant="outline-success" v-on="on">Load</b-button>
+                    </template>
+                    <v-card>
+                        <v-card-title>
+                            <span class="headline">Load Setting</span>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-container grid-list-md>
+                                <v-layout wrap>
+                                    <v-flex xs12>
+                                        <v-select
+                                            v-model="settingName"
+                                            :items="localSettingsNames"
+                                            label="Select Setting"
+                                        ></v-select>
+                                    </v-flex>
+                                </v-layout>
+                            </v-container>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="blue darken-1" flat @click="cancelLoad">Close</v-btn>
+                            <v-btn color="blue darken-1" flat @click="loadOption">Load</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+                <!-- save -->
+                <v-dialog v-model="saveDialog" persistent max-width="600px">
+                    <template v-slot:activator="{ on }">
+                        <b-button variant="outline-primary" v-on="on">Save As</b-button>
+                    </template>
+                    <v-card>
+                        <v-card-title>
+                            <span class="headline">Save Setting</span>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-container grid-list-md>
+                                <v-layout wrap>
+                                    <v-flex xs12>
+                                        <v-text-field
+                                            v-model="settingName"
+                                            label="Setting Name*"
+                                            required
+                                        ></v-text-field>
+                                    </v-flex>
+                                </v-layout>
+                            </v-container>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="blue darken-1" flat @click="cancelSave">Close</v-btn>
+                            <v-btn color="blue darken-1" flat @click="saveOption">Save</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+                <b-button
+                    variant="outline-danger"
+                    @click="resetOption"
+                    :disabled="saveDisabled"
+                >Save</b-button>
+            </b-button-group>
+        </div>
         <ejs-grid
             ref="portfolioComponent"
             :dataSource="data"
@@ -66,6 +133,31 @@ export default class Portfolio extends Vue {
         allowEditing: true,
         allowDeleting: true
     };
+
+    private saveDialog: boolean = false;
+    private loadDialog: boolean = false;
+
+    private settingName: string = '';
+
+    private localSettings: any;
+    private localSettingsNames: string[] = [];
+
+    private saveDisabled: boolean = true;
+
+    public constructor() {
+        super();
+
+        this.localSettings = JSON.parse(localStorage.getItem(
+            'portfolio'
+        ) as string);
+        if (this.localSettings === null) {
+            this.localSettings = [];
+        } else {
+            this.localSettings.settings.forEach((element: any) => {
+                this.localSettingsNames.push(element.name as string);
+            });
+        }
+    }
 
     public async addPortfolio(universe: SharedModel.Subject[]) {
         const assetInfo: any[] = [];
@@ -135,7 +227,7 @@ export default class Portfolio extends Vue {
                 benchmark: {
                     assetCode: benchmark.assetCode, // this.$store.state.option.benchmark,
                     volume: benchmark.volume,
-                    ratio: benchmark.ratio,
+                    ratio: benchmark.ratio
                 },
                 commissionType: this.$store.state.option.commissionType,
                 commission: this.$store.state.option.commission,
@@ -238,6 +330,14 @@ export default class Portfolio extends Vue {
         // }
         // const gridComponent = this.$refs.portfolioComponent as GridComponent;
         // gridComponent.setCellValue(assetCode, 'volume', 20);
+    }
+
+    private cancelLoad() {
+        this.loadDialog = false;
+    }
+
+    private cancelSave() {
+        this.saveDialog = false;
     }
 }
 </script>

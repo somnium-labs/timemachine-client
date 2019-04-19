@@ -74,7 +74,7 @@
                     :chartArea="chartArea"
                     :legendSettings="legendSettings"
                     :theme="theme"
-                    width="100%"
+                    width="90%"
                 ></ejs-chart>
                 <br>
                 <br>
@@ -91,7 +91,7 @@
                     :chartArea="chartArea"
                     :legendSettings="legendSettings"
                     :theme="theme"
-                    width="100%"
+                    width="90%"
                 ></ejs-chart>
                 <br>
                 <br>
@@ -108,7 +108,7 @@
                     :chartArea="chartArea"
                     :legendSettings="legendSettings"
                     :theme="theme"
-                    width="100%"
+                    width="90%"
                 ></ejs-chart>
             </b-tab>
         </b-tabs>
