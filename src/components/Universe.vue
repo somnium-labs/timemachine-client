@@ -13,7 +13,7 @@
             :pageSettings="pageSettings"
             :allowSorting="true"
             :toolbar="toolbar"
-            :allowExcelExport="true"
+            :allowExcelExport="false"
             :toolbarClick="toolbarClick"
             :contextMenuItems="contextMenuItems"
             :contextMenuClick="contextMenuClick"
@@ -90,7 +90,7 @@ export default class Universe extends Vue {
     private originData: any[] = [];
 
     private pageSettings = { pageSize: 20 };
-    private toolbar = ['ExcelExport'];
+    private toolbar = [/*'ExcelExport'*/];
     private contextMenuItems = [
         { text: 'Add Portfolio', id: 'addPortfolio' },
         { text: 'Select', id: 'select' },

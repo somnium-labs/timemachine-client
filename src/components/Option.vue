@@ -1,5 +1,70 @@
 <template>
-    <v-container py-0 pl-5>
+    <v-container py-0 pl-4>
+        <div class="center-align">
+            <div class="mt-3">
+                <b-button-group>
+                    <!-- load -->
+                    <v-dialog v-model="loadDialog" persistent max-width="600px">
+                        <template v-slot:activator="{ on }">
+                            <b-button variant="success" v-on="on">Load</b-button>
+                        </template>
+                        <v-card>
+                            <v-card-title>
+                                <span class="headline">Load Setting</span>
+                            </v-card-title>
+                            <v-card-text>
+                                <v-container grid-list-md>
+                                    <v-layout wrap>
+                                        <v-flex xs12>
+                                            <v-select
+                                                v-model="settingName"
+                                                :items="localSettingsNames"
+                                                label="Select Setting"
+                                            ></v-select>
+                                        </v-flex>
+                                    </v-layout>
+                                </v-container>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue darken-1" flat @click="cancelLoad">Close</v-btn>
+                                <v-btn color="blue darken-1" flat @click="loadOption">Load</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+                    <b-button variant="warning" @click="resetOption" :disabled="saveDisabled">Save</b-button>
+                    <!-- save -->
+                    <v-dialog v-model="saveDialog" persistent max-width="600px">
+                        <template v-slot:activator="{ on }">
+                            <b-button variant="info" v-on="on">Save As</b-button>
+                        </template>
+                        <v-card>
+                            <v-card-title>
+                                <span class="headline">Save Setting</span>
+                            </v-card-title>
+                            <v-card-text>
+                                <v-container grid-list-md>
+                                    <v-layout wrap>
+                                        <v-flex xs12>
+                                            <v-text-field
+                                                v-model="settingName"
+                                                label="Setting Name*"
+                                                required
+                                            ></v-text-field>
+                                        </v-flex>
+                                    </v-layout>
+                                </v-container>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue darken-1" flat @click="cancelSave">Close</v-btn>
+                                <v-btn color="blue darken-1" flat @click="saveOption">Save</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+                </b-button-group>
+            </div>
+        </div>
         <v-layout row wrap>
             <v-flex xs6>
                 <h6 style="margin-top: 0.28em">Start Date</h6>
@@ -7,6 +72,7 @@
             <v-flex xs4>
                 <ejs-datepicker
                     id="startDate"
+                    ref="startDate"
                     :value="startDate"
                     :format="dateFormat"
                     :change="change"
@@ -19,7 +85,13 @@
                 <h6 style="margin-top: 0.28em">End Date</h6>
             </v-flex>
             <v-flex xs4>
-                <ejs-datepicker id="endDate" :value="endDate" :format="dateFormat" :change="change"></ejs-datepicker>
+                <ejs-datepicker
+                    id="endDate"
+                    ref="endDate"
+                    :value="endDate"
+                    :format="dateFormat"
+                    :change="change"
+                ></ejs-datepicker>
             </v-flex>
         </v-layout>
         <!-- 자산 -->
@@ -198,11 +270,14 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { SharedModel } from '../model/SharedModel';
-import { DatePickerPlugin } from '@syncfusion/ej2-vue-calendars';
+import {
+    DatePickerPlugin,
+    DatePickerComponent
+} from '@syncfusion/ej2-vue-calendars';
 import { NumericTextBoxPlugin } from '@syncfusion/ej2-vue-inputs';
 import { enableRipple } from '@syncfusion/ej2-base';
 import Home from '../views/Home.vue';
+import { SharedModel } from '../model/SharedModel';
 import {
     CheckBoxPlugin,
     CheckBoxComponent,
@@ -237,6 +312,50 @@ export default class Option extends Vue {
     private slippageStep: number = 0.0001;
     private slippageFormat: string = 'P2';
 
+    private saveDialog: boolean = false;
+    private loadDialog: boolean = false;
+
+    private settingName: string = '';
+
+    private localSettings: any;
+    private localSettingsNames: string[] = [];
+
+    private saveDisabled: boolean = true;
+
+    private defaultOption = {
+        startDate: '2010-01-01',
+        endDate: '2019-01-01',
+        capital: 100000,
+        benchmark: 'JP225',
+        commissionType: 'Ratio',
+        commission: 0.0,
+        slippageType: 'Ratio',
+        slippage: 0.0,
+        tradeType: 'Ratio',
+        useOutstandingBalance: true,
+        usePointVolume: false,
+        useBuyAndHold: true,
+        useVolatilityBreakout: true,
+        useMovingAverage: false
+    };
+
+    public constructor() {
+        super();
+
+        this.localSettings = JSON.parse(localStorage.getItem(
+            'settings'
+        ) as string);
+        if (this.localSettings === null) {
+            this.localSettings = {
+                settings: []
+            };
+        } else {
+            this.localSettings.settings.forEach((element: any) => {
+                this.localSettingsNames.push(element.name as string);
+            });
+        }
+    }
+
     private get startDate() {
         return this.$store.state.option.startDate;
     }
@@ -269,12 +388,28 @@ export default class Option extends Vue {
         this.$store.state.option.commission = commission;
     }
 
+    private get commissionType() {
+        return this.$store.state.option.commissionType;
+    }
+
+    private set commissionType(type: string) {
+        this.$store.state.option.commissionType = type;
+    }
+
     private get slippage() {
         return this.$store.state.option.slippage;
     }
 
     private set slippage(slippage: number) {
         this.$store.state.option.slippage = slippage;
+    }
+
+    private get slippageType() {
+        return this.$store.state.option.slippageType;
+    }
+
+    private set slippageType(slippageType: string) {
+        this.$store.state.option.slippageType = slippageType;
     }
 
     private get benchmark() {
@@ -285,129 +420,122 @@ export default class Option extends Vue {
         this.$store.state.option.benchmark = assetCode;
     }
 
+    private get tradeType() {
+        return this.$store.state.option.tradeType;
+    }
+
+    private set tradeType(tradeType: string) {
+        this.$store.state.option.tradeType = tradeType;
+    }
+
+    private get useOutstandingBalance() {
+        return this.$store.state.option.useOutstandingBalance;
+    }
+
+    private set useOutstandingBalance(use: boolean) {
+        this.$store.state.option.useOutstandingBalance = use;
+    }
+
+    private get usePointVolume() {
+        return this.$store.state.option.usePointVolume;
+    }
+
+    private set usePointVolume(use: boolean) {
+        this.$store.state.option.usePointVolume = use;
+    }
+
+    private get useBuyAndHold() {
+        return this.$store.state.option.useBuyAndHold;
+    }
+
+    private set useBuyAndHold(use: boolean) {
+        this.$store.state.option.useBuyAndHold = use;
+    }
+
+    private get useVolatilityBreakout() {
+        return this.$store.state.option.useVolatilityBreakout;
+    }
+
+    private set useVolatilityBreakout(use: boolean) {
+        this.$store.state.option.useVolatilityBreakout = use;
+    }
+
+    private get useMovingAverage() {
+        return this.$store.state.option.useMovingAverage;
+    }
+
+    private set useMovingAverage(use: boolean) {
+        this.$store.state.option.useMovingAverage = use;
+    }
+
     private created() {
-        this.$store.state.option = {
-            startDate: '2010-01-01',
-            endDate: '2019-01-01',
-            capital: 100000,
-            benchmark: '',
-            commissionType: '',
-            commission: 0.0000,
-            slippageType: '',
-            slippage: 0.0000,
-            tradeType: '',
-            useOutstandingBalance: true,
-            usePointVolume: false,
-            useBuyAndHold: true,
-            useVolatilityBreakout: true,
-            useMovingAverage: false
-        };
+        this.updateOptionData(this.defaultOption);
     }
 
     private mounted() {
-        const commissionComboBox = this.$refs
-            .commissionType as ComboBoxComponent;
-        if (commissionComboBox != null) {
-            commissionComboBox.ej2Instances.value = 'Ratio';
-        }
-
-        const slippageComboBox = this.$refs.slippage as ComboBoxComponent;
-        if (slippageComboBox != null) {
-            slippageComboBox.ej2Instances.value = 'Ratio';
-        }
-
-        const orderVolumeComboBox = this.$refs.orderVolume as ComboBoxComponent;
-        if (orderVolumeComboBox != null) {
-            orderVolumeComboBox.ej2Instances.value = 'Ratio';
-        }
-
-        const leverageCheckBox = this.$refs.leverage as CheckBoxComponent;
-        if (leverageCheckBox != null) {
-            leverageCheckBox.ej2Instances.checked = true;
-        }
-
-        const benchmarkComboBox = this.$refs.benchmark as ComboBoxComponent;
-        if (benchmarkComboBox != null) {
-            benchmarkComboBox.ej2Instances.value = 'JP225';
-        }
-
-        const buyAndHoldCheckBox = this.$refs.buyAndHold as CheckBoxComponent;
-        if (buyAndHoldCheckBox != null) {
-            buyAndHoldCheckBox.ej2Instances.checked = true;
-        }
-
-        const volatilityBreakoutCheckBox = this.$refs
-            .volatilityBreakout as CheckBoxComponent;
-        if (volatilityBreakoutCheckBox != null) {
-            volatilityBreakoutCheckBox.ej2Instances.checked = true;
-        }
-
-        const movingAverageCheckBox = this.$refs
-            .movingAverage as CheckBoxComponent;
-        if (movingAverageCheckBox != null) {
-            movingAverageCheckBox.ej2Instances.checked = false;
-        }
+        this.updateOptionUI(this.defaultOption);
     }
 
     private change(args: any) {
         if (args.element.id === 'commissionType') {
-            this.$store.state.option.commissionType =
+            this.commissionType =
                 args.itemData != null ? args.itemData.value : '';
-            if (this.$store.state.option.commissionType === 'Ratio') {
+            if (this.commissionType === 'Ratio') {
                 this.commissionFormat = 'P2';
                 this.commissionStep = 0.0001;
-                this.$store.state.option.commission = 0.0000;
+                this.commission = 0.0;
             } else {
                 this.commissionFormat = '¥###.##';
                 this.commissionStep = 1;
-                this.$store.state.option.commission = 1;
+                this.commission = 1;
             }
         } else if (args.element.id === 'slippageType') {
-            this.$store.state.option.slippageType =
+            this.slippageType =
                 args.itemData != null ? args.itemData.value : '';
-            if (this.$store.state.option.slippageType === 'Ratio') {
+            if (this.slippageType === 'Ratio') {
                 this.slippageFormat = 'P2';
                 this.slippageStep = 0.0001;
-                this.$store.state.option.slippage = 0.0000;
+                this.slippage = 0.0;
             } else {
                 this.slippageFormat = '¥###.##';
                 this.slippageStep = 1;
-                this.$store.state.option.slippage = 1;
+                this.slippage = 1;
             }
         } else if (args.element.id === 'orderVolumeType') {
-            this.$store.state.option.tradeType =
-                args.itemData != null ? args.itemData.value : '';
+            this.tradeType = args.itemData != null ? args.itemData.value : '';
         } else if (args.element.id === 'benchmark') {
             this.benchmark = args.itemData != null ? args.itemData.value : '';
             const homeComponent = this.$parent as Home;
             homeComponent.setBenchmark(this.benchmark);
         } else if (args.element.id === 'startDate') {
-            this.startDate = args.element.value;
-            const homeComponent = this.$parent as Home;
-            homeComponent.onChangeStartDate(this.startDate);
+            if (args.element.value !== this.startDate) {
+                this.startDate = args.element.value;
+                const homeComponent = this.$parent as Home;
+                homeComponent.onChangeStartDate(this.startDate);
+            }
         } else if (args.element.id === 'endDate') {
             this.endDate = args.element.value;
         }
     }
 
     private toggleLeverage(args: any) {
-        this.$store.state.option.useOutstandingBalance = args.checked;
+        this.useOutstandingBalance = args.checked;
     }
 
     private toggleAllowDecimalPoint(args: any) {
-        this.$store.state.option.usePointVolume = args.checked;
+        this.usePointVolume = args.checked;
     }
 
     private toggleBuyAndHold(args: any) {
-        this.$store.state.option.useBuyAndHold = args.checked;
+        this.useBuyAndHold = args.checked;
     }
 
     private toggleVolatilityBreakout(args: any) {
-        this.$store.state.option.useVolatilityBreakout = args.checked;
+        this.useVolatilityBreakout = args.checked;
     }
 
     private toggleMovingAverage(args: any) {
-        this.$store.state.option.useMovingAverage = args.checked;
+        this.useMovingAverage = args.checked;
     }
 
     private analyzePortfolio() {
@@ -428,6 +556,131 @@ export default class Option extends Vue {
 
     private slippageChange(args: any) {
         this.slippage = args.value;
+    }
+
+    private saveOption() {
+        const setting = {
+            name: this.settingName,
+            setting: {
+                startDate: this.startDate,
+                endDate: this.endDate,
+                capital: this.capital,
+                benchmark: this.benchmark,
+                commissionType: this.commissionType,
+                commission: this.commission,
+                slippageType: this.slippageType,
+                slippage: this.slippage,
+                tradeType: this.tradeType,
+                useOutstandingBalance: this.useOutstandingBalance,
+                usePointVolume: this.usePointVolume,
+                useBuyAndHold: this.useBuyAndHold,
+                useVolatilityBreakout: this.useVolatilityBreakout,
+                useMovingAverage: this.useMovingAverage
+            }
+        };
+
+        const idx = this.localSettings.settings.findIndex((element: any) => {
+            return element.name === this.settingName;
+        });
+
+        if (idx === -1) {
+            this.localSettings.settings.push(setting);
+        } else {
+            this.localSettings.settings[idx].setting = setting;
+        }
+
+        localStorage.setItem('settings', JSON.stringify(this.localSettings));
+        // chrome.storage.sync.set({
+        //     setting: JSON.stringify(this.localSettings)
+        // });
+        this.saveDialog = false;
+        this.saveDisabled = false;
+    }
+
+    private cancelLoad() {
+        this.loadDialog = false;
+    }
+
+    private cancelSave() {
+        this.saveDialog = false;
+    }
+
+    private loadOption() {
+        const idx = this.localSettings.settings.findIndex((element: any) => {
+            return element.name === this.settingName;
+        });
+
+        if (idx !== -1) {
+            this.updateOptionUI(
+                this.localSettings.settings[idx].setting.setting
+            );
+            this.updateOptionData(
+                this.localSettings.settings[idx].setting.setting
+            );
+        }
+
+        this.loadDialog = false;
+        this.saveDisabled = false;
+    }
+
+    private resetOption() {
+        this.updateOptionUI(this.defaultOption);
+        this.updateOptionData(this.defaultOption);
+    }
+
+    private updateOptionData(option: SharedModel.TradeOption) {
+        this.$store.state.option = {
+            startDate: option.startDate,
+            endDate: option.endDate,
+            capital: option.capital,
+            benchmark: option.benchmark,
+            commissionType: option.commissionType,
+            commission: option.commission,
+            slippageType: option.slippageType,
+            slippage: option.slippage,
+            tradeType: option.tradeType,
+            useOutstandingBalance: option.useOutstandingBalance,
+            usePointVolume: option.usePointVolume,
+            useBuyAndHold: option.useBuyAndHold,
+            useVolatilityBreakout: option.useVolatilityBreakout,
+            useMovingAverage: option.useMovingAverage
+        };
+    }
+
+    private updateOptionUI(option: SharedModel.TradeOption) {
+        const startDateComponent = this.$refs.startDate as DatePickerComponent;
+        startDateComponent.ej2Instances.value = option.startDate;
+
+        const endDateComponent = this.$refs.endDate as DatePickerComponent;
+        endDateComponent.ej2Instances.value = option.endDate;
+
+        const commissionComboBox = this.$refs
+            .commissionType as ComboBoxComponent;
+        commissionComboBox.ej2Instances.value = option.commissionType;
+
+        const slippageComboBox = this.$refs.slippage as ComboBoxComponent;
+        slippageComboBox.ej2Instances.value = option.slippageType;
+
+        const orderVolumeComboBox = this.$refs.orderVolume as ComboBoxComponent;
+        orderVolumeComboBox.ej2Instances.value = option.tradeType;
+
+        const leverageCheckBox = this.$refs.leverage as CheckBoxComponent;
+        leverageCheckBox.ej2Instances.checked = option.useOutstandingBalance;
+
+        const benchmarkComboBox = this.$refs.benchmark as ComboBoxComponent;
+        benchmarkComboBox.ej2Instances.value = option.benchmark;
+
+        const buyAndHoldCheckBox = this.$refs.buyAndHold as CheckBoxComponent;
+        buyAndHoldCheckBox.ej2Instances.checked = option.useBuyAndHold;
+
+        const volatilityBreakoutCheckBox = this.$refs
+            .volatilityBreakout as CheckBoxComponent;
+        volatilityBreakoutCheckBox.ej2Instances.checked =
+            option.useVolatilityBreakout;
+
+        const movingAverageCheckBox = this.$refs
+            .movingAverage as CheckBoxComponent;
+        movingAverageCheckBox.ej2Instances.checked = option.useMovingAverage;
     }
 }
 </script>
