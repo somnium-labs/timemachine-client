@@ -1,7 +1,7 @@
 <template>
     <v-container py-0 pl-4>
         <v-layout row wrap>
-            <v-flex xs6>
+            <v-flex xs10>
                 <div class="mt-3">
                     <b-button-group>
                         <!-- load -->
@@ -70,7 +70,7 @@
                     </b-button-group>
                 </div>
             </v-flex>
-            <v-flex xs6></v-flex>
+            <v-flex xs2></v-flex>
         </v-layout>
         <br>
         <v-layout row wrap>
