@@ -2,7 +2,7 @@
     <div>
         <br>
         <H3>{{title}}</H3>
-        <div class="mt-3">
+        <div class="mt-3" v-if="title==='Portfolio'">
             <b-button-group>
                 <!-- load -->
                 <v-dialog v-model="loadDialog" persistent max-width="600px">
@@ -11,16 +11,16 @@
                     </template>
                     <v-card>
                         <v-card-title>
-                            <span class="headline">Load Setting</span>
+                            <span class="headline">Load Portfolio</span>
                         </v-card-title>
                         <v-card-text>
                             <v-container grid-list-md>
                                 <v-layout wrap>
                                     <v-flex xs12>
                                         <v-select
-                                            v-model="settingName"
+                                            v-model="portfolioName"
                                             :items="localSettingsNames"
-                                            label="Select Setting"
+                                            label="Select Portfolio"
                                         ></v-select>
                                     </v-flex>
                                 </v-layout>
@@ -29,7 +29,7 @@
                         <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn color="blue darken-1" flat @click="cancelLoad">Close</v-btn>
-                            <v-btn color="blue darken-1" flat @click="loadOption">Load</v-btn>
+                            <v-btn color="blue darken-1" flat @click="loadPortfolio">Load</v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
@@ -40,15 +40,15 @@
                     </template>
                     <v-card>
                         <v-card-title>
-                            <span class="headline">Save Setting</span>
+                            <span class="headline">Save Portfolio</span>
                         </v-card-title>
                         <v-card-text>
                             <v-container grid-list-md>
                                 <v-layout wrap>
                                     <v-flex xs12>
                                         <v-text-field
-                                            v-model="settingName"
-                                            label="Setting Name*"
+                                            v-model="portfolioName"
+                                            label="Portfolio Name*"
                                             required
                                         ></v-text-field>
                                     </v-flex>
@@ -58,17 +58,25 @@
                         <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn color="blue darken-1" flat @click="cancelSave">Close</v-btn>
-                            <v-btn color="blue darken-1" flat @click="saveOption">Save</v-btn>
+                            <v-btn color="blue darken-1" flat @click="savePortfolio">Save</v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
                 <b-button
                     variant="outline-danger"
-                    @click="resetOption"
+                    @click="savePortfolio"
                     :disabled="saveDisabled"
                 >Save</b-button>
             </b-button-group>
+            <br>
         </div>
+        <b-alert
+            :show="dismissCountDown"
+            dismissible
+            variant="warning"
+            @dismissed="dismissCountDown=0"
+            @dismiss-count-down="countDownChanged"
+        >At least two portfolios must be constructed! (It closes in {{ dismissCountDown }} seconds ...)</b-alert>
         <ejs-grid
             ref="portfolioComponent"
             :dataSource="data"
@@ -118,6 +126,8 @@ Vue.use(GridPlugin);
 })
 export default class Portfolio extends Vue {
     private data: any[] = [];
+    private dismissSecs: number = 5;
+    private dismissCountDown: number = 0;
 
     // key: asset code
     private portfolio: TS.Collections.Dictionary<
@@ -137,7 +147,7 @@ export default class Portfolio extends Vue {
     private saveDialog: boolean = false;
     private loadDialog: boolean = false;
 
-    private settingName: string = '';
+    private portfolioName: string = '';
 
     private localSettings: any;
     private localSettingsNames: string[] = [];
@@ -150,10 +160,13 @@ export default class Portfolio extends Vue {
         this.localSettings = JSON.parse(localStorage.getItem(
             'portfolio'
         ) as string);
+
         if (this.localSettings === null) {
-            this.localSettings = [];
+            this.localSettings = {
+                portfolio: []
+            };
         } else {
-            this.localSettings.settings.forEach((element: any) => {
+            this.localSettings.portfolio.forEach((element: any) => {
                 this.localSettingsNames.push(element.name as string);
             });
         }
@@ -286,6 +299,10 @@ export default class Portfolio extends Vue {
         this.data = temp;
     }
 
+    private countDownChanged(dismissCountDown: number) {
+        this.dismissCountDown = dismissCountDown;
+    }
+
     private addRecord(record: any) {
         this.portfolio.add(record.assetCode, {
             assetCode: record.assetCode,
@@ -301,13 +318,20 @@ export default class Portfolio extends Vue {
 
     private removeRecord() {
         const gridComponent = this.$refs.portfolioComponent as GridComponent;
-        gridComponent.deleteRecord();
-        const selectedrecords = (gridComponent.getSelectedRecords() as any) as SharedModel.Subject[];
-        selectedrecords.forEach((subject: SharedModel.Subject) => {
+        const selectedRecords = (gridComponent.getSelectedRecords() as any) as SharedModel.Subject[];
+        if (0 < selectedRecords.length) {
+            gridComponent.deleteRecord();
+            selectedRecords.forEach((subject: SharedModel.Subject) => {
             this.portfolio.remove(subject.assetCode);
         });
 
-        this.refreshPortfolio();
+            this.refreshPortfolio();
+        }
+    }
+
+    private removeRecordAll() {
+        this.data = [];
+        this.portfolio.clear();
     }
 
     private async contextMenuClick(args: any) {
@@ -338,6 +362,75 @@ export default class Portfolio extends Vue {
 
     private cancelSave() {
         this.saveDialog = false;
+    }
+
+    private savePortfolio() {
+        if (this.portfolio.count() < 2) {
+            this.dismissCountDown = this.dismissSecs;
+            this.saveDialog = false;
+            this.saveDisabled = false;
+            return;
+        }
+
+        const portfolio: any = [];
+
+        this.portfolio.forEach((x: any) => {
+            portfolio.push({
+                assetCode: x.value.assetCode,
+                exchange: x.value.exchange
+            });
+        });
+
+        const idx = this.localSettings.portfolio.findIndex((element: any) => {
+            return element.name === this.portfolioName;
+        });
+
+        if (idx === -1) {
+            this.localSettings.portfolio.push({
+                name: this.portfolioName,
+                subject: portfolio
+            });
+            this.localSettingsNames.push(this.portfolioName);
+        } else {
+            this.localSettings.portfolio[idx].subject = {
+                name: this.portfolioName,
+                subject: portfolio
+            };
+        }
+        localStorage.setItem('portfolio', JSON.stringify(this.localSettings));
+        // chrome.storage.sync.set({
+        //     setting: JSON.stringify(this.localSettings)
+        // });
+        this.saveDialog = false;
+        this.saveDisabled = false;
+    }
+
+    private loadPortfolio() {
+        const idx = this.localSettings.portfolio.findIndex((element: any) => {
+            return element.name === this.portfolioName;
+        });
+
+        if (idx !== -1) {
+            const universe: SharedModel.Subject[] = [];
+            this.localSettings.portfolio[idx].subject.subject.forEach((x: any) => {
+                universe.push({
+                    assetCode: x.assetCode,
+                    exchange: x.exchange,
+                    // interface 제약때문에 dummy
+                    assetName: '',
+                    sector: '',
+                    industry: '',
+                    marketCap: 0,
+                    evEvitda: 0,
+                    divYield: 0
+                });
+            });
+            this.removeRecordAll();
+            this.addPortfolio(universe);
+        }
+
+        this.loadDialog = false;
+        this.saveDisabled = false;
     }
 }
 </script>

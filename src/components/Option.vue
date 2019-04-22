@@ -593,6 +593,7 @@ export default class Option extends Vue {
 
         if (idx === -1) {
             this.localSettings.settings.push(setting);
+            this.localSettingsNames.push(this.settingName);
         } else {
             this.localSettings.settings[idx].setting = setting;
         }

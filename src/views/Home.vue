@@ -14,6 +14,8 @@
                     <v-flex xs6>
                         <Portfolio ref="portfolio" title="Portfolio"/>
                     </v-flex>
+                </v-layout>
+                <v-layout row wrap>
                     <v-flex xs6>
                         <Portfolio ref="benchmark" title="Benchmark"/>
                     </v-flex>
