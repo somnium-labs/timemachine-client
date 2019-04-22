@@ -620,12 +620,8 @@ export default class Option extends Vue {
         });
 
         if (idx !== -1) {
-            this.updateOptionUI(
-                this.localSettings.settings[idx].setting.setting
-            );
-            this.updateOptionData(
-                this.localSettings.settings[idx].setting.setting
-            );
+            this.updateOptionUI(this.localSettings.settings[idx].setting);
+            this.updateOptionData(this.localSettings.settings[idx].setting);
         }
 
         this.loadDialog = false;
