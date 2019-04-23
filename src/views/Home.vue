@@ -27,7 +27,6 @@
                 </v-layout>
             </v-flex>
         </v-layout>
-
         <v-snackbar
             v-model="snackbar"
             :bottom="y === 'bottom'"
@@ -41,6 +40,15 @@
             {{ text }}
             <v-btn color="pink" flat @click="snackbar = false">Close</v-btn>
         </v-snackbar>
+
+        <v-dialog v-model="dialog" hide-overlay persistent width="300">
+            <v-card color="primary" dark>
+                <v-card-text>
+                    Analyzing...
+                    <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
     </v-container>
 </template>
 
@@ -73,6 +81,7 @@ export default class Home extends Vue {
     private target: string = '.home';
     private isShow: boolean = true;
     private snackbar: boolean = false;
+    private dialog: boolean = false;
 
     public constructor() {
         super();
@@ -132,6 +141,8 @@ export default class Home extends Vue {
     }
 
     public async analyzePortfolio() {
+        this.dialog = true;
+
         const portfolioComponent = this.$refs.portfolio as Portfolio;
         const benchmarkComponent = this.$refs.benchmark as Portfolio;
         const benchmark = benchmarkComponent.getBenchmark();
@@ -141,6 +152,7 @@ export default class Home extends Vue {
         reportComponent.CreateReport(response);
 
         this.snackbar = true;
+        this.dialog = false;
     }
 
     public async refreshPortfolio() {

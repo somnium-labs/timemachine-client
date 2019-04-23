@@ -6,7 +6,7 @@
         <b-tabs>
             <b-tab title="Summary" active>
                 <ejs-grid
-                    ref="grid"
+                    ref="summary"
                     :dataSource="parentData"
                     :childGrid="childGrid"
                     :dataBound="onDataBound"
@@ -111,16 +111,54 @@
                     width="90%"
                 ></ejs-chart>
             </b-tab>
+            <b-tab title="Detail">
+                <div>
+                    <br>
+                    <h5>
+                        <b-badge variant="warning">Benchmark</b-badge>
+                    </h5>
+                    <Record ref="benchmark"/>
+                </div>
+                <div v-show="showBuyAndHold">
+                    <br>
+                    <h5>
+                        <b-badge variant="warning">Buy And Hold</b-badge>
+                    </h5>
+                    <Record ref="buyAndHold"/>
+                </div>
+                <div v-show="showVolatilityBreakout">
+                    <br>
+                    <h5>
+                        <b-badge variant="warning">Volatility Breakout</b-badge>
+                    </h5>
+                    <Record ref="volatilityBreakout"/>
+                </div>
+                <div v-show="showMovingAverage">
+                    <br>
+                    <h5>
+                        <b-badge variant="warning">Show Moving Average</b-badge>
+                    </h5>
+                    <Record ref="movingAverage"/>
+                </div>
+            </b-tab>
         </b-tabs>
     </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Provide, Inject } from 'vue-property-decorator';
+import {
+    Component,
+    Prop,
+    Vue,
+    Provide,
+    Inject,
+    Watch
+} from 'vue-property-decorator';
 import { Browser } from '@syncfusion/ej2-base';
 import axios from 'axios';
 import { TS } from 'typescript-linq';
 import { SharedModel } from '../model/SharedModel';
+import Record from '@/components/Record.vue';
 import {
     ChartComponent,
     ChartPlugin,
@@ -147,6 +185,9 @@ Vue.use(GridPlugin);
 Vue.use(ChartPlugin);
 
 @Component({
+    components: {
+        Record
+    },
     provide: {
         chart: [
             LineSeries,
@@ -157,15 +198,7 @@ Vue.use(ChartPlugin);
             ScrollBar,
             Crosshair
         ],
-        grid: [
-            DetailRow,
-            LineSeries,
-            DateTime,
-            Legend,
-            ScrollBar,
-            Tooltip,
-            Crosshair
-        ]
+        grid: [DetailRow]
     },
     props: {
         startDate: String,
@@ -175,6 +208,10 @@ Vue.use(ChartPlugin);
 export default class Report extends Vue {
     private summaryDetails: any[] = [];
     private theme: string = 'Bootstrap'; // fabric, Material, HighContrast, Bootstrapv4
+
+    private showBuyAndHold: boolean = false;
+    private showVolatilityBreakout: boolean = false;
+    private showMovingAverage: boolean = false;
 
     private primaryXAxis = {
         valueType: 'DateTime',
@@ -245,7 +282,13 @@ export default class Report extends Vue {
     };
 
     public CreateReport(data: any) {
-        const temp: any[] = [];
+        this.showBuyAndHold = this.$store.state.option.useBuyAndHold;
+        this.showVolatilityBreakout = this.$store.state.option.useVolatilityBreakout;
+        this.showMovingAverage = this.$store.state.option.useMovingAverage;
+
+        const summaryBuffer: any[] = [];
+        const recordBuffer: any[] = [];
+
         const summaryDetails: any[] = [];
         const cumulativeReturnRatioChartComponent = this.$refs
             .cumulativeReturnRatioChart as ChartComponent;
@@ -258,7 +301,21 @@ export default class Report extends Vue {
         const series3: any[] = [];
 
         data.data.forEach((v: any) => {
-            temp.push(v.summary);
+            summaryBuffer.push(v.summary);
+
+            if (v.summary.subjectType === '벤치마크') {
+                const component = this.$refs.benchmark as Record;
+                component.createRecords(v.records);
+            }  else if (v.strategyType === 'Buy And Hold') {
+                const component = this.$refs.buyAndHold as Record;
+                component.createRecords(v.records);
+            } else if (v.strategyType === 'Volatility Breakout') {
+                const component = this.$refs.volatilityBreakout as Record;
+                component.createRecords(v.records);
+            } else if (v.strategyType === 'Moving Average') {
+                const component = this.$refs.movingAverage as Record;
+                component.createRecords(v.records);
+            }
 
             v.summary.summaryDetails.forEach((x: any) => {
                 summaryDetails.push(x);
@@ -313,12 +370,16 @@ export default class Report extends Vue {
         mddChartComponent.ej2Instances.addSeries(series2);
         totalBalanceChartComponent.ej2Instances.addSeries(series3);
 
-        const gridComponent = this.$refs.grid as GridComponent;
-        gridComponent.ej2Instances.dataSource = temp;
-        gridComponent.ej2Instances.childGrid.dataSource = summaryDetails;
-
-        // console.log(summaryDetails);
+        const summaryComponent = this.$refs.summary as GridComponent;
+        summaryComponent.ej2Instances.dataSource = summaryBuffer;
+        summaryComponent.ej2Instances.childGrid.dataSource = summaryDetails;
     }
+
+    // @Watch('showBuyAndHold', { deep: true })
+    // private show() {
+    //     const component = this.$refs.buyAndHold as Record;
+    //     component.createRecords(v.records);
+    // }
 
     private data() {
         return {

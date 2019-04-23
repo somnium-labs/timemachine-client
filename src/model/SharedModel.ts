@@ -28,4 +28,18 @@ export namespace SharedModel {
         useVolatilityBreakout: boolean;
         useMovingAverage: boolean;
     }
+
+    // export interface Record {
+    //     date: Date;
+    //     totalBalance: number;
+    //     balance: number;
+    //     ratingBalance: number;
+    //     return: number;
+    //     cumulativeReturn: number;
+    //     returnRatio: number;
+    //     cumulativeReturnRatio: number;
+    //     volatilityRatio: number;
+    //     mdd: number;
+    //     max: number;
+    // }
 }
