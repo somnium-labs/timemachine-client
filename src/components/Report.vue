@@ -63,6 +63,23 @@
                 <br>
                 <br>
                 <ejs-chart
+                    ref="annualReturnsChart"
+                    style="display:block"
+                    :zoomSettings="zoomSettings"
+                    :crosshair="crosshair"
+                    title="Annual Returns"
+                    :primaryXAxis="annualReturnsXAxis"
+                    :primaryYAxis="annualReturnsYAxis"
+                    :tooltip="tooltip"
+                    :chartArea="chartArea"
+                    :legendSettings="legendSettings"
+                    :theme="theme"
+                    width="90%"
+                ></ejs-chart>
+                <br>
+                <br>
+                <br>
+                <ejs-chart
                     ref="cumulativeReturnRatioChart"
                     style="display:block"
                     :zoomSettings="zoomSettings"
@@ -110,25 +127,8 @@
                     :theme="theme"
                     width="90%"
                 ></ejs-chart>
-                <br>
-                <br>
-                <br>
-                <ejs-chart
-                    ref="annualReturnsChart"
-                    style="display:block"
-                    :zoomSettings="zoomSettings"
-                    :crosshair="crosshair"
-                    title="Annual Returns"
-                    :primaryXAxis="annualReturnsXAxis"
-                    :primaryYAxis="annualReturnsYAxis"
-                    :tooltip="tooltip"
-                    :chartArea="chartArea"
-                    :legendSettings="legendSettings"
-                    :theme="theme"
-                    width="90%"
-                ></ejs-chart>
             </b-tab>
-            <b-tab title="Detail">
+            <b-tab title="Records">
                 <div>
                     <br>
                     <h5>
@@ -157,6 +157,74 @@
                     </h5>
                     <Record ref="movingAverage"/>
                 </div>
+            </b-tab>
+            <b-tab title="Annual Returns">
+                <ejs-grid ref="annualReturnsGrid">
+                    <e-columns>
+                        <e-column field="year" headerText="Year" textAlign="left"></e-column>
+                        <e-column
+                            field="benchmark"
+                            headerText="Benchmark"
+                            textAlign="left"
+                            format="P2"
+                        ></e-column>
+                        <e-column
+                            v-if="showBuyAndHold"
+                            field="buyAndHold"
+                            headerText="Buy And Hold"
+                            textAlign="left"
+                            format="P2"
+                        ></e-column>
+                        <e-column
+                            v-if="showVolatilityBreakout"
+                            field="volatilityBreakout"
+                            headerText="Volatility Breakout"
+                            textAlign="left"
+                            format="P2"
+                        ></e-column>
+                        <e-column
+                            v-if="showMovingAverage"
+                            field="movingAverage"
+                            headerText="MovingAverage"
+                            textAlign="left"
+                            format="P2"
+                        ></e-column>
+                    </e-columns>
+                </ejs-grid>
+            </b-tab>
+            <b-tab title="Monthly Returns">
+                <ejs-grid ref="monthlyReturnsGrid">
+                    <e-columns>
+                        <e-column field="date" headerText="Date" textAlign="left"></e-column>
+                        <e-column
+                            field="benchmark"
+                            headerText="Benchmark"
+                            textAlign="left"
+                            format="P2"
+                        ></e-column>
+                        <e-column
+                            v-if="showBuyAndHold"
+                            field="buyAndHold"
+                            headerText="Buy And Hold"
+                            textAlign="left"
+                            format="P2"
+                        ></e-column>
+                        <e-column
+                            v-if="showVolatilityBreakout"
+                            field="volatilityBreakout"
+                            headerText="Volatility Breakout"
+                            textAlign="left"
+                            format="P2"
+                        ></e-column>
+                        <e-column
+                            v-if="showMovingAverage"
+                            field="movingAverage"
+                            headerText="MovingAverage"
+                            textAlign="left"
+                            format="P2"
+                        ></e-column>
+                    </e-columns>
+                </ejs-grid>
             </b-tab>
         </b-tabs>
     </div>
@@ -254,7 +322,7 @@ export default class Report extends Vue {
         minorTickLines: { width: 0 },
         interval: 1,
         lineStyle: { width: 0 },
-        labelIntersectAction: 'Rotate45',
+        labelIntersectAction: 'Rotate45'
         // valueType: 'Category'
     };
 
@@ -265,7 +333,7 @@ export default class Report extends Vue {
         majorGridLines: { width: 1 },
         minorGridLines: { width: 1 },
         minorTickLines: { width: 0 },
-        labelFormat: 'p2',
+        labelFormat: 'p2'
     };
 
     private cumulativeReturnYAxis = {
@@ -330,6 +398,9 @@ export default class Report extends Vue {
         const recordBuffer: any[] = [];
         const annualReturnsBuffer: any[] = [];
 
+        const annualReturnDatas: any = [];
+        const monthlyReturnDatas: any = [];
+
         const summaryDetails: any[] = [];
         const cumulativeReturnRatioChartComponent = this.$refs
             .cumulativeReturnRatioChart as ChartComponent;
@@ -352,15 +423,69 @@ export default class Report extends Vue {
             if (v.summary.subjectType === '벤치마크') {
                 const component = this.$refs.benchmark as Record;
                 component.createRecords(v.records);
+                v.annualReturns.forEach((x: any) => {
+                    annualReturnDatas.push({
+                        year: x.year,
+                        benchmark: x.returnRatio,
+                        buyAndHold: 0,
+                        volatilityBreakout: 0,
+                        movingAverage: 0
+                    });
+                });
+                v.monthlyReturns.forEach((x: any) => {
+                    monthlyReturnDatas.push({
+                        date: x.date,
+                        benchmark: x.returnRatio,
+                        buyAndHold: 0,
+                        volatilityBreakout: 0,
+                        movingAverage: 0
+                    });
+                });
             } else if (v.strategyType === 'Buy And Hold') {
                 const component = this.$refs.buyAndHold as Record;
                 component.createRecords(v.records);
+                v.annualReturns.forEach((x: any) => {
+                    const element = annualReturnDatas.find((annual: any) => {
+                        return annual.year === x.year;
+                    });
+                    element.buyAndHold = x.returnRatio;
+                });
+                v.monthlyReturns.forEach((x: any) => {
+                    const element = monthlyReturnDatas.find((annual: any) => {
+                        return annual.date === x.date;
+                    });
+                    element.buyAndHold = x.returnRatio;
+                });
             } else if (v.strategyType === 'Volatility Breakout') {
                 const component = this.$refs.volatilityBreakout as Record;
                 component.createRecords(v.records);
+                v.annualReturns.forEach((x: any) => {
+                    const element = annualReturnDatas.find((annual: any) => {
+                        return annual.year === x.year;
+                    });
+                    element.volatilityBreakout = x.returnRatio;
+                });
+                v.monthlyReturns.forEach((x: any) => {
+                    const element = monthlyReturnDatas.find((annual: any) => {
+                        return annual.date === x.date;
+                    });
+                    element.volatilityBreakout = x.returnRatio;
+                });
             } else if (v.strategyType === 'Moving Average') {
                 const component = this.$refs.movingAverage as Record;
                 component.createRecords(v.records);
+                v.annualReturns.forEach((x: any) => {
+                    const element = annualReturnDatas.find((annual: any) => {
+                        return annual.year === x.year;
+                    });
+                    element.movingAverage = x.returnRatio;
+                });
+                v.monthlyReturns.forEach((x: any) => {
+                    const element = monthlyReturnDatas.find((annual: any) => {
+                        return annual.date === x.date;
+                    });
+                    element.movingAverage = x.returnRatio;
+                });
             }
 
             v.summary.summaryDetails.forEach((x: any) => {
@@ -408,6 +533,7 @@ export default class Report extends Vue {
 
             const annualData = {
                 type: 'Column',
+                width: '100%',
                 name:
                     v.summary.subjectType === '벤치마크'
                         ? 'Benchmark'
@@ -434,6 +560,14 @@ export default class Report extends Vue {
         const summaryComponent = this.$refs.summary as GridComponent;
         summaryComponent.ej2Instances.dataSource = summaryBuffer;
         summaryComponent.ej2Instances.childGrid.dataSource = summaryDetails;
+
+        const annualReturnsGridComponent = this.$refs
+            .annualReturnsGrid as GridComponent;
+        annualReturnsGridComponent.ej2Instances.dataSource = annualReturnDatas;
+
+        const monthlyReturnsGridComponent = this.$refs
+            .monthlyReturnsGrid as GridComponent;
+        monthlyReturnsGridComponent.ej2Instances.dataSource = monthlyReturnDatas;
     }
 
     // @Watch('showBuyAndHold', { deep: true })

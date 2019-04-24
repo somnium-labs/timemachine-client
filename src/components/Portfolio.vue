@@ -322,8 +322,8 @@ export default class Portfolio extends Vue {
         if (0 < selectedRecords.length) {
             gridComponent.deleteRecord();
             selectedRecords.forEach((subject: SharedModel.Subject) => {
-            this.portfolio.remove(subject.assetCode);
-        });
+                this.portfolio.remove(subject.assetCode);
+            });
 
             this.refreshPortfolio();
         }
@@ -412,19 +412,21 @@ export default class Portfolio extends Vue {
 
         if (idx !== -1) {
             const universe: SharedModel.Subject[] = [];
-            this.localSettings.portfolio[idx].subject.subject.forEach((x: any) => {
-                universe.push({
-                    assetCode: x.assetCode,
-                    exchange: x.exchange,
-                    // interface 제약때문에 dummy
-                    assetName: '',
-                    sector: '',
-                    industry: '',
-                    marketCap: 0,
-                    evEvitda: 0,
-                    divYield: 0
-                });
-            });
+            this.localSettings.portfolio[idx].subject.subject.forEach(
+                (x: any) => {
+                    universe.push({
+                        assetCode: x.assetCode,
+                        exchange: x.exchange,
+                        // interface 제약때문에 dummy
+                        assetName: '',
+                        sector: '',
+                        industry: '',
+                        marketCap: 0,
+                        evEvitda: 0,
+                        divYield: 0
+                    });
+                }
+            );
             this.removeRecordAll();
             this.addPortfolio(universe);
         }
