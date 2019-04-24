@@ -110,6 +110,23 @@
                     :theme="theme"
                     width="90%"
                 ></ejs-chart>
+                <br>
+                <br>
+                <br>
+                <ejs-chart
+                    ref="annualReturnsChart"
+                    style="display:block"
+                    :zoomSettings="zoomSettings"
+                    :crosshair="crosshair"
+                    title="Annual Returns"
+                    :primaryXAxis="annualReturnsXAxis"
+                    :primaryYAxis="annualReturnsYAxis"
+                    :tooltip="tooltip"
+                    :chartArea="chartArea"
+                    :legendSettings="legendSettings"
+                    :theme="theme"
+                    width="90%"
+                ></ejs-chart>
             </b-tab>
             <b-tab title="Detail">
                 <div>
@@ -163,6 +180,7 @@ import {
     ChartComponent,
     ChartPlugin,
     LineSeries,
+    ColumnSeries,
     Zoom,
     Tooltip,
     Crosshair,
@@ -191,6 +209,7 @@ Vue.use(ChartPlugin);
     provide: {
         chart: [
             LineSeries,
+            ColumnSeries,
             Legend,
             Tooltip,
             DateTime,
@@ -226,6 +245,27 @@ export default class Report extends Vue {
         //     .add('month', 2)
         //     .toDate()
         // crosshairTooltip: { enable: true }
+    };
+
+    private annualReturnsXAxis = {
+        majorGridLines: { width: 0 },
+        minorGridLines: { width: 0 },
+        majorTickLines: { width: 0 },
+        minorTickLines: { width: 0 },
+        interval: 1,
+        lineStyle: { width: 0 },
+        labelIntersectAction: 'Rotate45',
+        // valueType: 'Category'
+    };
+
+    private annualReturnsYAxis = {
+        title: 'Annual Return',
+        lineStyle: { width: 0 },
+        majorTickLines: { width: 0 },
+        majorGridLines: { width: 1 },
+        minorGridLines: { width: 1 },
+        minorTickLines: { width: 0 },
+        labelFormat: 'p2',
     };
 
     private cumulativeReturnYAxis = {
@@ -288,6 +328,7 @@ export default class Report extends Vue {
 
         const summaryBuffer: any[] = [];
         const recordBuffer: any[] = [];
+        const annualReturnsBuffer: any[] = [];
 
         const summaryDetails: any[] = [];
         const cumulativeReturnRatioChartComponent = this.$refs
@@ -295,18 +336,23 @@ export default class Report extends Vue {
         const mddChartComponent = this.$refs.mddChart as ChartComponent;
         const totalBalanceChartComponent = this.$refs
             .totalBalanceChart as ChartComponent;
+        const annualReturnsChartComponent = this.$refs
+            .annualReturnsChart as ChartComponent;
 
         const series1: any[] = [];
         const series2: any[] = [];
         const series3: any[] = [];
 
+        const annualSeries: any[] = [];
+
         data.data.forEach((v: any) => {
             summaryBuffer.push(v.summary);
+            annualReturnsBuffer.push(v.annualReturns);
 
             if (v.summary.subjectType === '벤치마크') {
                 const component = this.$refs.benchmark as Record;
                 component.createRecords(v.records);
-            }  else if (v.strategyType === 'Buy And Hold') {
+            } else if (v.strategyType === 'Buy And Hold') {
                 const component = this.$refs.buyAndHold as Record;
                 component.createRecords(v.records);
             } else if (v.strategyType === 'Volatility Breakout') {
@@ -359,16 +405,31 @@ export default class Report extends Vue {
                 legendShape: 'Circle'
             };
             series3.push(data3);
+
+            const annualData = {
+                type: 'Column',
+                name:
+                    v.summary.subjectType === '벤치마크'
+                        ? 'Benchmark'
+                        : v.summary.strategyType,
+                dataSource: v.annualReturns,
+                xName: 'year',
+                yName: 'returnRatio',
+                legendShape: 'Circle'
+            };
+            annualSeries.push(annualData);
         });
 
         // clear
         cumulativeReturnRatioChartComponent.ej2Instances.series = [];
         mddChartComponent.ej2Instances.series = [];
         totalBalanceChartComponent.ej2Instances.series = [];
+        annualReturnsChartComponent.ej2Instances.series = [];
 
         cumulativeReturnRatioChartComponent.ej2Instances.addSeries(series1);
         mddChartComponent.ej2Instances.addSeries(series2);
         totalBalanceChartComponent.ej2Instances.addSeries(series3);
+        annualReturnsChartComponent.ej2Instances.addSeries(annualSeries);
 
         const summaryComponent = this.$refs.summary as GridComponent;
         summaryComponent.ej2Instances.dataSource = summaryBuffer;

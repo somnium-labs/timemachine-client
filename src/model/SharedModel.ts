@@ -29,6 +29,12 @@ export namespace SharedModel {
         useMovingAverage: boolean;
     }
 
+    export enum StrategyType {
+        BuyAndHold,
+        VolatilityBreakout,
+        MovingAverage,
+    }
+
     // export interface Record {
     //     date: Date;
     //     totalBalance: number;
