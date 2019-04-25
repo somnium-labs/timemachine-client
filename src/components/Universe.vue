@@ -53,6 +53,7 @@
                 <e-column field="pbr" headerText="PBR" textAlign="center"></e-column>
                 <e-column field="evEvitda" headerText="EV/EVITDA" textAlign="center"></e-column>
                 <e-column field="divYield" headerText="Div Yield" textAlign="center"></e-column>
+                <!--
                 <e-column
                     field="recentVolatility1Year"
                     headerText="Y1"
@@ -83,6 +84,7 @@
                     textAlign="center"
                     format="P2"
                 ></e-column>
+                -->
             </e-columns>
         </ejs-grid>
     </div>
@@ -189,8 +191,8 @@ export default class Universe extends Vue {
 
     private dataBound() {
         const gridComponent = this.$refs.grid as GridComponent;
-        gridComponent.autoFitColumns(['assetCode', 'exchange', 'per', 'pbr', 'evEvitda', 'divYield',
-        'recentVolatility1Year', 'recentVolatility3Year', 'recentVolatility5Year', 'recentVolatility7Year', 'recentVolatility10Year']);
+        gridComponent.autoFitColumns(['assetCode', 'exchange', 'per', 'pbr', 'evEvitda', 'divYield']);
+        // 'recentVolatility1Year', 'recentVolatility3Year', 'recentVolatility5Year', 'recentVolatility7Year', 'recentVolatility10Year']);
     }
 }
 </script>
