@@ -10,6 +10,11 @@ export namespace SharedModel {
         pbr?: number;
         evEvitda: number;
         divYield: number;
+        recentVolatility1Year: number;
+        recentVolatility3Year: number;
+        recentVolatility5Year: number;
+        recentVolatility7Year: number;
+        recentVolatility10Year: number;
     }
 
     export interface TradeOption {

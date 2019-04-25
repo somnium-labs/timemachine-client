@@ -423,7 +423,12 @@ export default class Portfolio extends Vue {
                         industry: '',
                         marketCap: 0,
                         evEvitda: 0,
-                        divYield: 0
+                        divYield: 0,
+                        recentVolatility1Year: 0,
+                        recentVolatility3Year: 0,
+                        recentVolatility5Year: 0,
+                        recentVolatility7Year: 0,
+                        recentVolatility10Year: 0
                     });
                 }
             );
