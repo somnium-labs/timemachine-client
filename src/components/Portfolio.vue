@@ -412,7 +412,7 @@ export default class Portfolio extends Vue {
 
         if (idx !== -1) {
             const universe: SharedModel.Subject[] = [];
-            this.localSettings.portfolio[idx].subject.subject.forEach(
+            this.localSettings.portfolio[idx].subject.forEach(
                 (x: any) => {
                     universe.push({
                         assetCode: x.assetCode,
