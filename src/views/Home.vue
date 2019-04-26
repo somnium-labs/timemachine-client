@@ -125,6 +125,7 @@ export default class Home extends Vue {
     public setBenchmark(benchmark: string) {
         const universe: SharedModel.Subject[] = [];
         universe.push({
+            rowNumber: 0,
             assetCode: benchmark,
             exchange: 'INDEX',
             // interface 제약때문에 dummy

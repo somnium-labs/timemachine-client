@@ -7,9 +7,13 @@
             <b-tab title="Summary" active>
                 <ejs-grid
                     ref="summary"
+                    id="reportGrid"
                     :dataSource="parentData"
                     :childGrid="childGrid"
                     :dataBound="onDataBound"
+                    :toolbar="toolbar"
+                    :allowExcelExport="true"
+                    :toolbarClick="toolbarClick"
                 >
                     <e-columns>
                         <e-column field="subjectType" headerText="Type" textAlign="left"></e-column>
@@ -261,7 +265,9 @@ import {
     GridComponent,
     Edit,
     ContextMenu,
-    DetailRow
+    DetailRow,
+    ExcelExport,
+    Toolbar
 } from '@syncfusion/ej2-vue-grids';
 import { TabPlugin, TabComponent } from '@syncfusion/ej2-vue-navigations';
 import moment from 'moment';
@@ -285,7 +291,7 @@ Vue.use(ChartPlugin);
             ScrollBar,
             Crosshair
         ],
-        grid: [DetailRow]
+        grid: [DetailRow, ExcelExport, Toolbar]
     },
     props: {
         startDate: String,
@@ -295,6 +301,7 @@ Vue.use(ChartPlugin);
 export default class Report extends Vue {
     private summaryDetails: any[] = [];
     private theme: string = 'Bootstrap'; // fabric, Material, HighContrast, Bootstrapv4
+    private toolbar = ['ExcelExport'];
 
     private showBuyAndHold: boolean = false;
     private showVolatilityBreakout: boolean = false;
@@ -642,8 +649,15 @@ export default class Report extends Vue {
     }
 
     private onDataBound() {
-        const gridComponent = this.$refs.grid as GridComponent;
-        // gridComponent.ej2Instances.detailRowModule.expandAll();
+        const gridComponent = this.$refs.summary as GridComponent;
+        gridComponent.ej2Instances.detailRowModule.expandAll();
+    }
+
+    private toolbarClick(args: any) {
+        if (args.item.id === 'reportGrid_excelexport') {
+            const gridComponent = this.$refs.summary as GridComponent;
+            gridComponent.excelExport();
+        }
     }
 }
 </script>

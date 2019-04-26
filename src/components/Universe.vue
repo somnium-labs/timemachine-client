@@ -18,8 +18,10 @@
             :contextMenuItems="contextMenuItems"
             :contextMenuClick="contextMenuClick"
             :dataBound="dataBound"
+            :rowDataBound="rowDataBound"
         >
             <e-columns>
+                <e-column field="rowNumber" headerText="Row" textAlign="left"></e-column>
                 <e-column field="assetCode" headerText="Code" textAlign="left"></e-column>
                 <e-column
                     field="assetName"
@@ -53,7 +55,6 @@
                 <e-column field="pbr" headerText="PBR" textAlign="center"></e-column>
                 <e-column field="evEvitda" headerText="EV/EVITDA" textAlign="center"></e-column>
                 <e-column field="divYield" headerText="Div Yield" textAlign="center"></e-column>
-                <!--
                 <e-column
                     field="recentVolatility1Year"
                     headerText="Y1"
@@ -84,7 +85,6 @@
                     textAlign="center"
                     format="P2"
                 ></e-column>
-                -->
             </e-columns>
         </ejs-grid>
     </div>
@@ -104,8 +104,10 @@ import {
     Sort,
     Toolbar,
     ExcelExport,
+    ExcelExportProperties,
     GridComponent,
-    ContextMenu
+    ContextMenu,
+    RowDataBoundEventArgs
 } from '@syncfusion/ej2-vue-grids';
 
 Vue.use(GridPlugin);
@@ -139,8 +141,10 @@ export default class Universe extends Vue {
         );
         const data = result.data;
         const temp: any[] = [];
+        let row: number = 0;
         data.forEach((x: SharedModel.Subject) => {
             const element = {
+                rowNumber: (row++ % 20) + 1,
                 assetCode: x.assetCode,
                 assetName: x.assetName,
                 exchange: x.exchange,
@@ -162,12 +166,17 @@ export default class Universe extends Vue {
 
         this.data = temp;
         this.originData = temp;
+
+        console.log('created');
     }
 
     private toolbarClick(args: any) {
         if (args.item.id === 'universeGrid_excelexport') {
             const gridComponent = this.$refs.grid as GridComponent;
-            gridComponent.excelExport();
+            const exportProperties: ExcelExportProperties = {
+                hierarchyExportMode: 'All' // Expanded, All, None
+            };
+            gridComponent.excelExport(exportProperties);
         }
     }
 
@@ -190,9 +199,30 @@ export default class Universe extends Vue {
     }
 
     private dataBound() {
+        console.log('dataBound');
         const gridComponent = this.$refs.grid as GridComponent;
-        gridComponent.autoFitColumns(['assetCode', 'exchange', 'per', 'pbr', 'evEvitda', 'divYield']);
-        // 'recentVolatility1Year', 'recentVolatility3Year', 'recentVolatility5Year', 'recentVolatility7Year', 'recentVolatility10Year']);
+        gridComponent.autoFitColumns([
+            'rowNumber',
+            'assetCode',
+            'exchange',
+            'per',
+            'pbr',
+            'evEvitda',
+            'divYield',
+            'recentVolatility1Year',
+            'recentVolatility3Year',
+            'recentVolatility5Year',
+            'recentVolatility7Year',
+            'recentVolatility10Year'
+        ]);
+    }
+
+    private rowDataBound(args: RowDataBoundEventArgs) {
+        (args.data as SharedModel.Subject).rowNumber =
+            parseInt(
+                (args.row as Element).getAttribute('aria-rowindex') as string,
+                10
+            ) + 1;
     }
 }
 </script>

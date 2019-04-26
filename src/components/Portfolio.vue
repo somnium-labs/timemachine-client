@@ -415,6 +415,7 @@ export default class Portfolio extends Vue {
             this.localSettings.portfolio[idx].subject.forEach(
                 (x: any) => {
                     universe.push({
+                        rowNumber: 0,
                         assetCode: x.assetCode,
                         exchange: x.exchange,
                         // interface 제약때문에 dummy
