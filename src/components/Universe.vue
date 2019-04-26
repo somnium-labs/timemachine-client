@@ -206,9 +206,7 @@ export default class Universe extends Vue {
             // 'rowNumber',
             'assetCode',
             'assetName',
-            'exchange',
-            'sector',
-            'industry'
+            'sector'
         ]);
     }
 
