@@ -329,7 +329,8 @@ export default class Report extends Vue {
         minorTickLines: { width: 0 },
         interval: 1,
         lineStyle: { width: 0 },
-        labelIntersectAction: 'Rotate45'
+        labelIntersectAction: 'Rotate45',
+        labelFormat: 'n0'
         // valueType: 'Category'
     };
 

@@ -126,6 +126,7 @@ export default class Home extends Vue {
         const universe: SharedModel.Subject[] = [];
         universe.push({
             rowNumber: 0,
+            firstDate: new Date(),
             assetCode: benchmark,
             exchange: 'INDEX',
             // interface 제약때문에 dummy

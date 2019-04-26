@@ -21,7 +21,9 @@
             :rowDataBound="rowDataBound"
         >
             <e-columns>
+                <!--
                 <e-column field="rowNumber" headerText="Row" textAlign="left"></e-column>
+                -->
                 <e-column field="assetCode" headerText="Code" textAlign="left"></e-column>
                 <e-column
                     field="assetName"
@@ -30,6 +32,7 @@
                     clipMode="EllipsisWithTooltip"
                 ></e-column>
                 <e-column field="exchange" headerText="Exchange" textAlign="left" :filter="filter"></e-column>
+                <e-column field="firstDate" headerText="First Date" textAlign="left"></e-column>
                 <e-column
                     field="sector"
                     headerText="Sector"
@@ -145,6 +148,7 @@ export default class Universe extends Vue {
         data.forEach((x: SharedModel.Subject) => {
             const element = {
                 rowNumber: (row++ % 20) + 1,
+                firstDate: x.firstDate,
                 assetCode: x.assetCode,
                 assetName: x.assetName,
                 exchange: x.exchange,
@@ -166,8 +170,6 @@ export default class Universe extends Vue {
 
         this.data = temp;
         this.originData = temp;
-
-        console.log('created');
     }
 
     private toolbarClick(args: any) {
@@ -199,10 +201,9 @@ export default class Universe extends Vue {
     }
 
     private dataBound() {
-        console.log('dataBound');
         const gridComponent = this.$refs.grid as GridComponent;
         gridComponent.autoFitColumns([
-            'rowNumber',
+            // 'rowNumber',
             'assetCode',
             'exchange',
             'per',

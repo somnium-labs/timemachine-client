@@ -1,6 +1,7 @@
 export namespace SharedModel {
     export interface Subject {
         rowNumber: number;
+        firstDate: Date;
         assetCode: string;
         assetName: string;
         exchange: string;

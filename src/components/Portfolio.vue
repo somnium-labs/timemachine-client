@@ -416,6 +416,7 @@ export default class Portfolio extends Vue {
                 (x: any) => {
                     universe.push({
                         rowNumber: 0,
+                        firstDate: new Date(),
                         assetCode: x.assetCode,
                         exchange: x.exchange,
                         // interface 제약때문에 dummy
