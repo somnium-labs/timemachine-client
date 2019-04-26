@@ -205,16 +205,10 @@ export default class Universe extends Vue {
         gridComponent.autoFitColumns([
             // 'rowNumber',
             'assetCode',
+            'assetName',
             'exchange',
-            'per',
-            'pbr',
-            'evEvitda',
-            'divYield',
-            'recentVolatility1Year',
-            'recentVolatility3Year',
-            'recentVolatility5Year',
-            'recentVolatility7Year',
-            'recentVolatility10Year'
+            'sector',
+            'industry'
         ]);
     }
 
