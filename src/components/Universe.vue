@@ -32,7 +32,13 @@
                     clipMode="EllipsisWithTooltip"
                 ></e-column>
                 <e-column field="exchange" headerText="Exchange" textAlign="left" :filter="filter"></e-column>
-                <e-column field="firstDate" headerText="First Date" textAlign="left"></e-column>
+                <e-column
+                    field="firstDate"
+                    headerText="First Date"
+                    textAlign="left"
+                    :format="formatOptions"
+                    type="date"
+                ></e-column>
                 <e-column
                     field="sector"
                     headerText="Sector"
@@ -112,6 +118,7 @@ import {
     ContextMenu,
     RowDataBoundEventArgs
 } from '@syncfusion/ej2-vue-grids';
+import moment from 'moment';
 
 Vue.use(GridPlugin);
 
@@ -137,6 +144,7 @@ export default class Universe extends Vue {
     private selectionOptions = { type: 'Multiple' };
     private filterOptions = { type: 'Menu' };
     private filter = { type: 'CheckBox' };
+    private formatOptions = { type:'date', format:'yyyy-MM-dd' };
 
     public async created() {
         const result = await axios(
@@ -148,7 +156,7 @@ export default class Universe extends Vue {
         data.forEach((x: SharedModel.Subject) => {
             const element = {
                 rowNumber: (row++ % 20) + 1,
-                firstDate: x.firstDate,
+                firstDate: moment(x.firstDate as Date),
                 assetCode: x.assetCode,
                 assetName: x.assetName,
                 exchange: x.exchange,
