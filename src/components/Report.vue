@@ -641,6 +641,7 @@ export default class Report extends Vue {
             dates.forEach((date: string) => {
                 transaction[assetCode][date].forEach((x: any) => {
                    x.side = x.side === 0 ? 'SELL' : 'BUY';
+                   x.total = x.price * x.volume;
                    transactions.push(x);
                 });
             });
