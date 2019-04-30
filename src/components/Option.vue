@@ -595,7 +595,7 @@ export default class Option extends Vue {
             this.localSettings.settings.push(setting);
             this.localSettingsNames.push(this.settingName);
         } else {
-            this.localSettings.settings[idx].setting = setting;
+            this.localSettings.settings[idx].setting = setting.setting;
         }
 
         localStorage.setItem('settings', JSON.stringify(this.localSettings));
