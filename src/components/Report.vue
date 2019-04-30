@@ -3,7 +3,7 @@
         <br>
         <br>
         <H3>Portfolio Analysis Results {{startDate}} {{endDate}}</H3>
-        <b-tabs>
+        <b-tabs v-model="selectedTab">
             <b-tab title="Summary" active>
                 <ejs-grid
                     ref="summary"
@@ -341,6 +341,8 @@ export default class Report extends Vue {
 
     private transactions: any[] = [];
 
+    private selectedTab: number = 0;
+
     private primaryXAxis = {
         valueType: 'DateTime',
         labelFormat: 'yy-MM',
@@ -431,6 +433,10 @@ export default class Report extends Vue {
         enableScrollbar: true
     };
 
+    public InitializeTab() {
+        this.selectedTab = 0;
+    }
+
     public CreateReport(data: any) {
         this.showBuyAndHold = this.$store.state.option.useBuyAndHold;
         this.showVolatilityBreakout = this.$store.state.option.useVolatilityBreakout;
@@ -462,7 +468,11 @@ export default class Report extends Vue {
             summaryBuffer.push(v.summary);
             annualReturnsBuffer.push(v.annualReturns);
 
-            this.createTransaction(v.transactions, v.summary.subjectType, v.strategyType);
+            this.createTransaction(
+                v.transactions,
+                v.summary.subjectType,
+                v.strategyType
+            );
 
             if (v.summary.subjectType === '벤치마크') {
                 const component = this.$refs.benchmark as Record;
@@ -620,18 +630,26 @@ export default class Report extends Vue {
     //     component.createRecords(v.records);
     // }
 
-    private createTransaction(transaction: any, subjectType: string, strategyType: string) {
-
-        let transactionComponent = this.$refs.benchmarkTransaction as Transaction;
+    private createTransaction(
+        transaction: any,
+        subjectType: string,
+        strategyType: string
+    ) {
+        let transactionComponent = this.$refs
+            .benchmarkTransaction as Transaction;
 
         if (subjectType === '벤치마크') {
-            transactionComponent = this.$refs.benchmarkTransaction as Transaction;
+            transactionComponent = this.$refs
+                .benchmarkTransaction as Transaction;
         } else if (strategyType === 'Buy And Hold') {
-            transactionComponent = this.$refs.buyAndHoldTransaction as Transaction;
+            transactionComponent = this.$refs
+                .buyAndHoldTransaction as Transaction;
         } else if (strategyType === 'Volatility Breakout') {
-            transactionComponent = this.$refs.volatilityBreakoutTransaction as Transaction;
+            transactionComponent = this.$refs
+                .volatilityBreakoutTransaction as Transaction;
         } else if (strategyType === 'Moving Average') {
-            transactionComponent = this.$refs.movingAverageTransaction as Transaction;
+            transactionComponent = this.$refs
+                .movingAverageTransaction as Transaction;
         }
 
         const transactions: any[] = [];
@@ -640,9 +658,9 @@ export default class Report extends Vue {
             const dates = Object.keys(transaction[assetCode]);
             dates.forEach((date: string) => {
                 transaction[assetCode][date].forEach((x: any) => {
-                   x.side = x.side === 0 ? 'SELL' : 'BUY';
-                   x.total = x.price * x.volume;
-                   transactions.push(x);
+                    x.side = x.side === 0 ? 'SELL' : 'BUY';
+                    x.total = x.price * x.volume;
+                    transactions.push(x);
                 });
             });
         });

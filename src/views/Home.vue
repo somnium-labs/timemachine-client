@@ -150,12 +150,13 @@ export default class Home extends Vue {
     public async analyzePortfolio() {
         this.dialog = true;
 
+        const reportComponent = this.$refs.report as Report;
+        reportComponent.InitializeTab();
+
         const portfolioComponent = this.$refs.portfolio as Portfolio;
         const benchmarkComponent = this.$refs.benchmark as Portfolio;
         const benchmark = benchmarkComponent.getBenchmark();
         const response = await portfolioComponent.analyzePortfolio(benchmark);
-
-        const reportComponent = this.$refs.report as Report;
         reportComponent.CreateReport(response);
 
         this.snackbar = true;
