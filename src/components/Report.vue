@@ -157,7 +157,7 @@
                 <div v-show="showMovingAverage">
                     <br>
                     <h5>
-                        <b-badge variant="warning">Show Moving Average</b-badge>
+                        <b-badge variant="warning">Moving Average</b-badge>
                     </h5>
                     <Record ref="movingAverage"/>
                 </div>
@@ -230,6 +230,36 @@
                     </e-columns>
                 </ejs-grid>
             </b-tab>
+            <b-tab title="Transaction">
+                <div>
+                    <br>
+                    <h5>
+                        <b-badge variant="warning">Benchmark</b-badge>
+                    </h5>
+                    <Transaction ref="benchmarkTransaction"/>
+                </div>
+                <div v-show="showBuyAndHold">
+                    <br>
+                    <h5>
+                        <b-badge variant="warning">Buy And Hold</b-badge>
+                    </h5>
+                    <Transaction ref="buyAndHoldTransaction"/>
+                </div>
+                <div v-show="showVolatilityBreakout">
+                    <br>
+                    <h5>
+                        <b-badge variant="warning">Volatility Breakout</b-badge>
+                    </h5>
+                    <Transaction ref="volatilityBreakoutTransaction"/>
+                </div>
+                <div v-show="showMovingAverage">
+                    <br>
+                    <h5>
+                        <b-badge variant="warning">Moving Average</b-badge>
+                    </h5>
+                    <Transaction ref="movingAverageTransaction"/>
+                </div>
+            </b-tab>
         </b-tabs>
     </div>
 </template>
@@ -248,6 +278,7 @@ import axios from 'axios';
 import { TS } from 'typescript-linq';
 import { SharedModel } from '../model/SharedModel';
 import Record from '@/components/Record.vue';
+import Transaction from '@/components/Transaction.vue';
 import {
     ChartComponent,
     ChartPlugin,
@@ -278,7 +309,8 @@ Vue.use(ChartPlugin);
 
 @Component({
     components: {
-        Record
+        Record,
+        Transaction
     },
     provide: {
         chart: [
@@ -306,6 +338,8 @@ export default class Report extends Vue {
     private showBuyAndHold: boolean = false;
     private showVolatilityBreakout: boolean = false;
     private showMovingAverage: boolean = false;
+
+    private transactions: any[] = [];
 
     private primaryXAxis = {
         valueType: 'DateTime',
@@ -427,6 +461,8 @@ export default class Report extends Vue {
         data.data.forEach((v: any) => {
             summaryBuffer.push(v.summary);
             annualReturnsBuffer.push(v.annualReturns);
+
+            this.createTransaction(v.transactions, v.summary.subjectType, v.strategyType);
 
             if (v.summary.subjectType === '벤치마크') {
                 const component = this.$refs.benchmark as Record;
@@ -583,6 +619,35 @@ export default class Report extends Vue {
     //     const component = this.$refs.buyAndHold as Record;
     //     component.createRecords(v.records);
     // }
+
+    private createTransaction(transaction: any, subjectType: string, strategyType: string) {
+
+        let transactionComponent = this.$refs.benchmarkTransaction as Transaction;
+
+        if (subjectType === '벤치마크') {
+            transactionComponent = this.$refs.benchmarkTransaction as Transaction;
+        } else if (strategyType === 'Buy And Hold') {
+            transactionComponent = this.$refs.buyAndHoldTransaction as Transaction;
+        } else if (strategyType === 'Volatility Breakout') {
+            transactionComponent = this.$refs.volatilityBreakoutTransaction as Transaction;
+        } else if (strategyType === 'Moving Average') {
+            transactionComponent = this.$refs.movingAverageTransaction as Transaction;
+        }
+
+        const transactions: any[] = [];
+        const assetCodes = Object.keys(transaction);
+        assetCodes.forEach((assetCode: string) => {
+            const dates = Object.keys(transaction[assetCode]);
+            dates.forEach((date: string) => {
+                transaction[assetCode][date].forEach((x: any) => {
+                   x.side = x.side === 0 ? 'SELL' : 'BUY';
+                   transactions.push(x);
+                });
+            });
+        });
+
+        transactionComponent.createTransactions(transactions);
+    }
 
     private data() {
         return {

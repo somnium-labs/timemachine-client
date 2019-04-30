@@ -144,7 +144,7 @@ export default class Universe extends Vue {
     private selectionOptions = { type: 'Multiple' };
     private filterOptions = { type: 'Menu' };
     private filter = { type: 'CheckBox' };
-    private formatOptions = { type:'date', format:'yyyy-MM-dd' };
+    private formatOptions = { type: 'date', format: 'yyyy-MM-dd' };
 
     public async created() {
         const result = await axios(
