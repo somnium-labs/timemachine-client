@@ -1,7 +1,7 @@
 <template>
     <div>
         <br>
-        <H3>{{title}}</H3>
+        <H3 style="color: white;">{{title}}</H3>
         <div class="mt-3" v-if="title==='Portfolio'">
             <b-button-group>
                 <!-- load -->

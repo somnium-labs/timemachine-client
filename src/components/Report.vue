@@ -2,9 +2,9 @@
     <div>
         <br>
         <br>
-        <H3>Portfolio Analysis Results {{startDate}} {{endDate}}</H3>
+        <H3 style="color: white;">Portfolio Analysis Results {{startDate}} {{endDate}}</H3>
         <b-tabs v-model="selectedTab">
-            <b-tab title="Summary" active>
+            <b-tab title="Summary" active :title-link-class="'tab-title-class'">
                 <ejs-grid
                     ref="summary"
                     id="reportGrid"
@@ -78,6 +78,7 @@
                     :chartArea="chartArea"
                     :legendSettings="legendSettings"
                     :theme="theme"
+                    :palettes="palettes"
                     width="90%"
                 ></ejs-chart>
                 <br>
@@ -95,6 +96,7 @@
                     :chartArea="chartArea"
                     :legendSettings="legendSettings"
                     :theme="theme"
+                    :palettes="palettes"
                     width="90%"
                 ></ejs-chart>
                 <br>
@@ -112,6 +114,7 @@
                     :chartArea="chartArea"
                     :legendSettings="legendSettings"
                     :theme="theme"
+                    :palettes="palettes"
                     width="90%"
                 ></ejs-chart>
                 <br>
@@ -129,10 +132,11 @@
                     :chartArea="chartArea"
                     :legendSettings="legendSettings"
                     :theme="theme"
+                    :palettes="palettes"
                     width="90%"
                 ></ejs-chart>
             </b-tab>
-            <b-tab title="Records">
+            <b-tab title="Records" :title-link-class="'tab-title-class'">
                 <div>
                     <br>
                     <h5>
@@ -162,7 +166,7 @@
                     <Record ref="movingAverage"/>
                 </div>
             </b-tab>
-            <b-tab title="Annual Returns">
+            <b-tab title="Annual Returns" :title-link-class="'tab-title-class'">
                 <ejs-grid ref="annualReturnsGrid">
                     <e-columns>
                         <e-column field="year" headerText="Year" textAlign="left"></e-column>
@@ -196,7 +200,7 @@
                     </e-columns>
                 </ejs-grid>
             </b-tab>
-            <b-tab title="Monthly Returns">
+            <b-tab title="Monthly Returns" :title-link-class="'tab-title-class'">
                 <ejs-grid ref="monthlyReturnsGrid">
                     <e-columns>
                         <e-column field="date" headerText="Date" textAlign="left"></e-column>
@@ -230,7 +234,7 @@
                     </e-columns>
                 </ejs-grid>
             </b-tab>
-            <b-tab title="Transaction">
+            <b-tab title="Transaction" :title-link-class="'tab-title-class'">
                 <div>
                     <br>
                     <h5>
@@ -332,8 +336,9 @@ Vue.use(ChartPlugin);
 })
 export default class Report extends Vue {
     private summaryDetails: any[] = [];
-    private theme: string = 'Bootstrap'; // fabric, Material, HighContrast, Bootstrapv4
+    private theme: string = 'MaterialDark'; // fabric, Material, HighContrast, Bootstrapv4
     private toolbar = ['ExcelExport'];
+    private palettes = ['#A16EE5', '#03BDAE', '#FFC000', '#ED7D30'];
 
     private showBuyAndHold: boolean = false;
     private showVolatilityBreakout: boolean = false;
@@ -746,3 +751,13 @@ export default class Report extends Vue {
     }
 }
 </script>
+
+<style>
+.tab-title-class {
+    color: #ffffff !important;
+}
+.nav-tabs .nav-link.active {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+}
+</style>

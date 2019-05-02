@@ -1,5 +1,5 @@
 <template>
-    <v-container py-0 pl-4>
+    <v-container style="background-color: #212121;" py-0 pl-4>
         <v-layout row wrap>
             <v-flex xs10>
                 <div class="mt-3">
@@ -75,7 +75,7 @@
         <br>
         <v-layout row wrap>
             <v-flex xs6>
-                <h6 style="margin-top: 0.28em">Start Date</h6>
+                <h6 style="margin-top: 0.28em; color: white;">Start Date</h6>
             </v-flex>
             <v-flex xs4>
                 <ejs-datepicker
@@ -90,7 +90,7 @@
         <!-- 종료날짜 -->
         <v-layout row wrap>
             <v-flex xs6>
-                <h6 style="margin-top: 0.28em">End Date</h6>
+                <h6 style="margin-top: 0.28em; color: white;">End Date</h6>
             </v-flex>
             <v-flex xs4>
                 <ejs-datepicker
@@ -105,7 +105,7 @@
         <!-- 자산 -->
         <v-layout row wrap>
             <v-flex xs6>
-                <h6 style="margin-top: 0.28em">Capital</h6>
+                <h6 style="margin-top: 0.28em; color: white;">Capital</h6>
             </v-flex>
             <v-flex xs4>
                 <ejs-numerictextbox
@@ -119,7 +119,7 @@
         <!-- 수수료 타입 -->
         <v-layout row wrap>
             <v-flex xs6>
-                <h6 style="margin-top: 0.28em">Commission</h6>
+                <h6 style="margin-top: 0.28em; color: white;">Commission</h6>
             </v-flex>
             <v-flex xs4>
                 <ejs-combobox
@@ -150,7 +150,7 @@
         <!-- 슬리피지 타입 -->
         <v-layout row wrap>
             <v-flex xs6>
-                <h6 style="margin-top: 0.28em">Slippage</h6>
+                <h6 style="margin-top: 0.28em; color: white;">Slippage</h6>
             </v-flex>
             <v-flex xs4>
                 <ejs-combobox
@@ -179,7 +179,7 @@
         <!-- 주문수량 -->
         <v-layout row wrap>
             <v-flex xs6>
-                <h6 style="margin-top: 0.28em">Order Volume</h6>
+                <h6 style="margin-top: 0.28em; color: white;">Order Volume</h6>
             </v-flex>
             <v-flex xs4>
                 <ejs-combobox
@@ -207,7 +207,7 @@
         <!-- 미수금 사용 -->
         <v-layout row wrap>
             <v-flex xs6>
-                <h6 style="margin-top: 0.28em">Leverage</h6>
+                <h6 style="margin-top: 0.28em; color: white;">Leverage</h6>
             </v-flex>
             <v-flex xs4>
                 <ejs-checkbox ref="leverage" class="e-checkbox-wrapper" :change="toggleLeverage"></ejs-checkbox>
@@ -216,7 +216,7 @@
         <!-- 벤치마크 -->
         <v-layout row wrap>
             <v-flex xs6>
-                <h6 style="margin-top: 0.28em">Benchmark</h6>
+                <h6 style="margin-top: 0.28em; color: white;">Benchmark</h6>
             </v-flex>
             <v-flex xs4>
                 <ejs-combobox
@@ -231,7 +231,7 @@
         <!-- Buy And Hold -->
         <v-layout row wrap>
             <v-flex xs6>
-                <h6 style="margin-top: 0.28em">Buy And Hold</h6>
+                <h6 style="margin-top: 0.28em; color: white;">Buy And Hold</h6>
             </v-flex>
             <v-flex xs6>
                 <ejs-checkbox
@@ -245,7 +245,7 @@
         <!-- Volatility Breakout -->
         <v-layout row wrap>
             <v-flex xs6>
-                <h6 style="margin-top: 0.28em">Volatility Breakout</h6>
+                <h6 style="margin-top: 0.28em; color: white;">Volatility Breakout</h6>
             </v-flex>
             <v-flex xs4>
                 <ejs-checkbox
@@ -259,7 +259,7 @@
         <!-- Moving Average -->
         <v-layout row wrap>
             <v-flex xs6>
-                <h6 style="margin-top: 0.28em">Moving Average</h6>
+                <h6 style="margin-top: 0.28em; color: white;">Moving Average</h6>
             </v-flex>
             <v-flex xs4>
                 <ejs-checkbox

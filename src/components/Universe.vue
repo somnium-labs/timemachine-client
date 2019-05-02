@@ -1,6 +1,6 @@
 <template>
     <div>
-        <H3>Universe</H3>
+        <H3 style="color: white;">Universe</H3>
         <ejs-grid
             ref="grid"
             id="universeGrid"
