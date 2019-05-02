@@ -44,5 +44,5 @@ export default class App extends Vue {
 @import '../node_modules/@syncfusion/ej2-vue-richtexteditor/styles/material.css';
 @import '../node_modules/@syncfusion/ej2-vue-splitbuttons/styles/material.css';
 @import '../node_modules/@syncfusion/ej2-vue-inplace-editor/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-vue-grids/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-vue-grids/styles/material-dark.css';
 </style>
