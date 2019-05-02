@@ -7,10 +7,16 @@
             :toolbar="toolbar"
             :allowExcelExport="true"
             :toolbarClick="toolbarClick"
+            :allowSorting="true"
+            :allowPaging="true"
+            :pageSettings="pageSettings"
+            :allowFiltering="true"
+            :filterSettings="filterOptions"
         >
             <e-columns>
                 <e-column field="assetCode" headerText="Code" textAlign="left"></e-column>
                 <e-column field="assetName" headerText="Name" textAlign="left"></e-column>
+                <e-column field="exchange" headerText="Exchange" textAlign="left" :filter="filter"></e-column>
                 <e-column
                     field="initialBalance"
                     headerText="Initial Balance"
@@ -54,6 +60,10 @@
                     textAlign="left"
                     format="#,##.##"
                 ></e-column>
+                <e-column field="per" headerText="PER" textAlign="center"></e-column>
+                <e-column field="pbr" headerText="PBR" textAlign="center"></e-column>
+                <e-column field="evEvitda" headerText="EV/EVITDA" textAlign="center"></e-column>
+                <e-column field="divYield" headerText="Div Yield" textAlign="center"></e-column>
             </e-columns>
         </ejs-grid>
     </div>
@@ -69,7 +79,7 @@ import {
     Sort,
     Toolbar,
     ExcelExport,
-    ExcelExportProperties,
+    ExcelExportProperties
 } from '@syncfusion/ej2-vue-grids';
 import moment from 'moment';
 
@@ -85,7 +95,11 @@ export default class Trend extends Vue {
     private strategy: string = '';
     private date: string = '';
 
+    private pageSettings = { pageSize: 20 };
     private toolbar = ['ExcelExport'];
+
+    private filterOptions = { type: 'Menu' };
+    private filter = { type: 'CheckBox' };
 
     public createTrend(strategy: string, date: string, data: any[]) {
         this.strategy = strategy;
