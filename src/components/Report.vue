@@ -670,7 +670,6 @@ export default class Report extends Vue {
 
     private createTrend(data: any) {
         const date = moment(Date.now()).format('YYYYMMDDHHmmss');
-        console.log(date);
         let trendComponent = this.$refs.buyAndHoldTrend as Trend;
         const strategies = Object.keys(data);
 

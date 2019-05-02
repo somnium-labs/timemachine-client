@@ -67,7 +67,9 @@ import {
     Page,
     Filter,
     Sort,
-    Toolbar
+    Toolbar,
+    ExcelExport,
+    ExcelExportProperties,
 } from '@syncfusion/ej2-vue-grids';
 import moment from 'moment';
 
@@ -75,7 +77,7 @@ Vue.use(GridPlugin);
 
 @Component({
     provide: {
-        grid: [Page, Filter, Sort, Toolbar]
+        grid: [Page, Filter, Sort, Toolbar, ExcelExport]
     }
 })
 export default class Trend extends Vue {
@@ -93,10 +95,12 @@ export default class Trend extends Vue {
 
     private toolbarClick(args: any) {
         if (args.item.id === 'trendGrid_excelexport') {
+            console.log('save');
             const gridComponent = this.$refs.trend as GridComponent;
-            gridComponent.excelExport({
+            const exportProperties: ExcelExportProperties = {
                 fileName: `trend_${this.date}_${this.strategy}.xlsx`
-            });
+            };
+            gridComponent.excelExport(exportProperties);
         }
     }
 }
