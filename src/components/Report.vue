@@ -16,8 +16,8 @@
                     :toolbarClick="toolbarClick"
                 >
                     <e-columns>
-                        <e-column field="subjectType" headerText="Type" textAlign="left"></e-column>
-                        <e-column field="strategyType" headerText="Strategy" textAlign="left"></e-column>
+                        <e-column field="assetCode" headerText="Type" textAlign="left"></e-column>
+                        <e-column field="assetName" headerText="Strategy" textAlign="left"></e-column>
                         <e-column
                             field="initialBalance"
                             headerText="Initial Balance"
@@ -264,6 +264,29 @@
                     <Transaction ref="movingAverageTransaction"/>
                 </div>
             </b-tab>
+            <b-tab title="Trend" active :title-link-class="'tab-title-class'">
+                <div v-show="showBuyAndHold">
+                    <br>
+                    <h5>
+                        <b-badge variant="warning">Buy And Hold</b-badge>
+                    </h5>
+                    <Trend ref="buyAndHoldTrend"/>
+                </div>
+                <div v-show="showVolatilityBreakout">
+                    <br>
+                    <h5>
+                        <b-badge variant="warning">Volatility Breakout</b-badge>
+                    </h5>
+                    <Trend ref="volatilityBreakoutTrend"/>
+                </div>
+                <div v-show="showMovingAverage">
+                    <br>
+                    <h5>
+                        <b-badge variant="warning">Moving Average</b-badge>
+                    </h5>
+                    <Trend ref="movingAverageTrend"/>
+                </div>
+            </b-tab>
         </b-tabs>
     </div>
 </template>
@@ -283,6 +306,7 @@ import { TS } from 'typescript-linq';
 import { SharedModel } from '../model/SharedModel';
 import Record from '@/components/Record.vue';
 import Transaction from '@/components/Transaction.vue';
+import Trend from '@/components/Trend.vue';
 import {
     ChartComponent,
     ChartPlugin,
@@ -314,7 +338,8 @@ Vue.use(ChartPlugin);
 @Component({
     components: {
         Record,
-        Transaction
+        Transaction,
+        Trend
     },
     provide: {
         chart: [
@@ -440,6 +465,14 @@ export default class Report extends Vue {
 
     public InitializeTab() {
         this.selectedTab = 0;
+    }
+
+    public CreateReportAll(response: any) {
+        this.showBuyAndHold = this.$store.state.option.useBuyAndHold;
+        this.showVolatilityBreakout = this.$store.state.option.useVolatilityBreakout;
+        this.showMovingAverage = this.$store.state.option.useMovingAverage;
+
+        this.createTrend(response.data);
     }
 
     public CreateReport(data: any) {
@@ -634,6 +667,26 @@ export default class Report extends Vue {
     //     const component = this.$refs.buyAndHold as Record;
     //     component.createRecords(v.records);
     // }
+
+    private createTrend(data: any) {
+        const date = moment(Date.now()).format('YYYYMMDDHHmmss');
+        console.log(date);
+        let trendComponent = this.$refs.buyAndHoldTrend as Trend;
+        const strategies = Object.keys(data);
+
+        strategies.forEach((strategy: string) => {
+
+            if (strategy === 'Buy And Hold') {
+                trendComponent = this.$refs.buyAndHoldTrend as Trend;
+            } else if (strategy === 'Moving Average') {
+                trendComponent = this.$refs.movingAverageTrend as Trend;
+            } else if (strategy === 'Volatility Breakout') {
+                trendComponent = this.$refs.volatilityBreakoutTrend as Trend;
+            }
+
+            trendComponent.createTrend(strategy, date, data[strategy]);
+        });
+    }
 
     private createTransaction(
         transaction: any,

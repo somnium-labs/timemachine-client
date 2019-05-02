@@ -272,6 +272,7 @@
         </v-layout>
         <div class="center-align">
             <v-btn color="success" @click="analyzePortfolio">Analyze Portfolio</v-btn>
+            <v-btn color="warning" @click="analyzeAllPortfolio">Analyze All</v-btn>
         </div>
     </v-container>
 </template>
@@ -549,6 +550,11 @@ export default class Option extends Vue {
     private analyzePortfolio() {
         const homeComponent = this.$parent as Home;
         homeComponent.analyzePortfolio();
+    }
+
+    private analyzeAllPortfolio() {
+        const homeComponent = this.$parent as Home;
+        homeComponent.analyzeAllPortfolio();
     }
 
     private commissionChange(args: any) {

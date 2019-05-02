@@ -37,7 +37,7 @@
             :top="y === 'top'"
             :vertical="mode === 'vertical'"
         >
-            {{ text }}
+            {{ snackbarText }}
             <v-btn color="pink" flat @click="snackbar = false">Close</v-btn>
         </v-snackbar>
 
@@ -65,6 +65,7 @@ import {
 import { SharedModel } from '../model/SharedModel';
 import { TabPlugin, TabComponent } from '@syncfusion/ej2-vue-navigations';
 import { enableRipple, createElement } from '@syncfusion/ej2-base';
+import axios from 'axios';
 
 Vue.use(TabPlugin);
 Vue.use(SidebarPlugin);
@@ -82,6 +83,7 @@ export default class Home extends Vue {
     private isShow: boolean = true;
     private snackbar: boolean = false;
     private dialog: boolean = false;
+    private snackbarText: string = 'Portfolio analysis is complete.';
 
     public constructor() {
         super();
@@ -100,8 +102,7 @@ export default class Home extends Vue {
             x: null,
             y: 'top',
             mode: '',
-            timeout: 5000,
-            text: 'Portfolio analysis is complete.'
+            timeout: 5000
         };
     }
 
@@ -161,6 +162,42 @@ export default class Home extends Vue {
 
         this.snackbar = true;
         this.dialog = false;
+    }
+
+    public async analyzeAllPortfolio() {
+
+        this.snackbarText = 'Request is complete. Please wait.';
+        this.snackbar = true;
+
+        const reportComponent = this.$refs.report as Report;
+        reportComponent.InitializeTab();
+
+        const response = await axios({
+            url: `${this.$store.state.url}/api/values/AnalyzeAllPortfolio`,
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' },
+            data: {
+                startDate: this.$store.state.option.startDate,
+                endDate: this.$store.state.option.endDate,
+                capital: this.$store.state.option.capital,
+                commissionType: this.$store.state.option.commissionType,
+                commission: this.$store.state.option.commission,
+                slippageType: this.$store.state.option.slippageType,
+                slippage: this.$store.state.option.slippage,
+                orderVolumeType: this.$store.state.option.tradeType,
+                allowDecimalPoint: this.$store.state.option.usePointVolume,
+                AllowLeverage: this.$store.state.option.useOutstandingBalance,
+                useBuyAndHold: this.$store.state.option.useBuyAndHold,
+                useVolatilityBreakout: this.$store.state.option
+                    .useVolatilityBreakout,
+                useMovingAverage: this.$store.state.option.useMovingAverage
+            }
+        });
+
+        reportComponent.CreateReportAll(response);
+
+        this.snackbarText = 'All analysis is complete.';
+        this.snackbar = true;
     }
 
     public async refreshPortfolio() {

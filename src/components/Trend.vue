@@ -1,0 +1,103 @@
+<template>
+    <div>
+        <ejs-grid
+            ref="trend"
+            id="trendGrid"
+            :dataSource="data"
+            :toolbar="toolbar"
+            :allowExcelExport="true"
+            :toolbarClick="toolbarClick"
+        >
+            <e-columns>
+                <e-column field="assetCode" headerText="Code" textAlign="left"></e-column>
+                <e-column field="assetName" headerText="Name" textAlign="left"></e-column>
+                <e-column
+                    field="initialBalance"
+                    headerText="Initial Balance"
+                    textAlign="left"
+                    format="¥#,##"
+                ></e-column>
+                <e-column
+                    field="endBalance"
+                    headerText="Final Balance"
+                    textAlign="left"
+                    format="¥#,##"
+                ></e-column>
+                <e-column
+                    field="commission"
+                    headerText="Commission"
+                    textAlign="left"
+                    format="¥#,##.#"
+                ></e-column>
+                <e-column
+                    field="periodReturnRatio"
+                    headerText="Period Returns"
+                    textAlign="left"
+                    format="P2"
+                ></e-column>
+                <e-column
+                    field="annualizedReturnRatio"
+                    headerText="Annual Returns"
+                    textAlign="left"
+                    format="P2"
+                ></e-column>
+                <e-column
+                    field="volatilityRatio"
+                    headerText="Volatility"
+                    textAlign="left"
+                    format="P2"
+                ></e-column>
+                <e-column field="mddRatio" headerText="MDD" textAlign="left" format="P2"></e-column>
+                <e-column
+                    field="sharpeRatio"
+                    headerText="Sharpe Ratio"
+                    textAlign="left"
+                    format="#,##.##"
+                ></e-column>
+            </e-columns>
+        </ejs-grid>
+    </div>
+</template>
+
+<script lang="ts">
+import { Component, Prop, Vue, Provide, Inject } from 'vue-property-decorator';
+import {
+    GridPlugin,
+    GridComponent,
+    Page,
+    Filter,
+    Sort,
+    Toolbar
+} from '@syncfusion/ej2-vue-grids';
+import moment from 'moment';
+
+Vue.use(GridPlugin);
+
+@Component({
+    provide: {
+        grid: [Page, Filter, Sort, Toolbar]
+    }
+})
+export default class Trend extends Vue {
+    private data: any[] = [];
+    private strategy: string = '';
+    private date: string = '';
+
+    private toolbar = ['ExcelExport'];
+
+    public createTrend(strategy: string, date: string, data: any[]) {
+        this.strategy = strategy;
+        this.date = date;
+        this.data = data;
+    }
+
+    private toolbarClick(args: any) {
+        if (args.item.id === 'trendGrid_excelexport') {
+            const gridComponent = this.$refs.trend as GridComponent;
+            gridComponent.excelExport({
+                fileName: `trend_${this.date}_${this.strategy}.xlsx`
+            });
+        }
+    }
+}
+</script>
