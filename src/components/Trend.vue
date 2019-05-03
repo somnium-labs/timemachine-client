@@ -18,6 +18,20 @@
                 <e-column field="assetName" headerText="Name" textAlign="left"></e-column>
                 <e-column field="exchange" headerText="Exchange" textAlign="left" :filter="filter"></e-column>
                 <e-column
+                    field="marketCap"
+                    headerText="Market Cap"
+                    textAlign="left"
+                    format="N0"
+                    width="180"
+                ></e-column>
+                <e-column
+                    field="firstDate"
+                    headerText="First Date"
+                    textAlign="left"
+                    :format="formatOptions"
+                    type="date"
+                ></e-column>
+                <e-column
                     field="initialBalance"
                     headerText="Initial Balance"
                     textAlign="left"
@@ -97,6 +111,7 @@ export default class Trend extends Vue {
 
     private pageSettings = { pageSize: 20 };
     private toolbar = ['ExcelExport'];
+    private formatOptions = { type: 'date', format: 'yyyy-MM-dd' };
 
     private filterOptions = { type: 'Menu' };
     private filter = { type: 'CheckBox' };
