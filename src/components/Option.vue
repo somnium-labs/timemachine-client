@@ -5,7 +5,7 @@
                 <div class="mt-3">
                     <b-button-group>
                         <!-- load -->
-                        <v-dialog v-model="loadDialog" persistent max-width="600px">
+                        <v-dialog v-model="loadDialog" persistent max-width="600px" dark>
                             <template v-slot:activator="{ on }">
                                 <b-button variant="outline-success" v-on="on">Load</b-button>
                             </template>
@@ -34,7 +34,7 @@
                             </v-card>
                         </v-dialog>
                         <!-- save -->
-                        <v-dialog v-model="saveDialog" persistent max-width="600px">
+                        <v-dialog v-model="saveDialog" persistent max-width="600px" dark>
                             <template v-slot:activator="{ on }">
                                 <b-button variant="outline-primary" v-on="on">Save As</b-button>
                             </template>

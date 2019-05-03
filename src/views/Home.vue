@@ -41,7 +41,7 @@
             <v-btn color="pink" flat @click="snackbar = false">Close</v-btn>
         </v-snackbar>
 
-        <v-dialog v-model="dialog" hide-overlay persistent width="300">
+        <v-dialog v-model="dialog" hide-overlay persistent width="300" dark>
             <v-card color="primary" dark>
                 <v-card-text>
                     Analyzing...

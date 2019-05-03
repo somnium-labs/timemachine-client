@@ -5,7 +5,7 @@
         <div class="mt-3" v-if="title==='Portfolio'">
             <b-button-group>
                 <!-- load -->
-                <v-dialog v-model="loadDialog" persistent max-width="600px">
+                <v-dialog v-model="loadDialog" persistent max-width="600px" dark>
                     <template v-slot:activator="{ on }">
                         <b-button variant="outline-success" v-on="on">Load</b-button>
                     </template>
@@ -34,7 +34,7 @@
                     </v-card>
                 </v-dialog>
                 <!-- save -->
-                <v-dialog v-model="saveDialog" persistent max-width="600px">
+                <v-dialog v-model="saveDialog" persistent max-width="600px" dark>
                     <template v-slot:activator="{ on }">
                         <b-button variant="outline-primary" v-on="on">Save As</b-button>
                     </template>
@@ -96,7 +96,8 @@
                 ></e-column>
                 <e-column field="volume" headerText="Volume" textAlign="left" format="N1"></e-column>
                 <e-column field="ratio" headerText="Ratio" textAlign="left" format="P2"></e-column>
-                <e-column field="price" headerText="Price" textAlign="left" :allowEditing="false"></e-column>
+                <e-column field="date" headerText="Date" textAlign="left" :allowEditing="false"></e-column>
+                <e-column field="price" headerText="Price" textAlign="left" :allowEditing="false" format="N2"></e-column>
             </e-columns>
         </ejs-grid>
     </div>
@@ -207,6 +208,7 @@ export default class Portfolio extends Vue {
                 exchange: x.exchange,
                 volume: newVolume,
                 ratio: newRatio,
+                date: x.date,
                 price: newPrice
             };
             this.addRecord(record);
@@ -281,6 +283,7 @@ export default class Portfolio extends Vue {
 
         const data = response.data.data;
         data.forEach((x: any) => {
+            this.portfolio.getValue(x.assetCode).date = x.date;
             this.portfolio.getValue(x.assetCode).price = x.openPrice;
         });
 
@@ -310,6 +313,7 @@ export default class Portfolio extends Vue {
             exchange: record.exchange,
             volume: record.volume,
             ratio: record.ratio,
+            date: record.date,
             price: record.price
         });
 
@@ -412,28 +416,26 @@ export default class Portfolio extends Vue {
 
         if (idx !== -1) {
             const universe: SharedModel.Subject[] = [];
-            this.localSettings.portfolio[idx].subject.forEach(
-                (x: any) => {
-                    universe.push({
-                        rowNumber: 0,
-                        firstDate: new Date(),
-                        assetCode: x.assetCode,
-                        exchange: x.exchange,
-                        // interface 제약때문에 dummy
-                        assetName: '',
-                        sector: '',
-                        industry: '',
-                        marketCap: 0,
-                        evEvitda: 0,
-                        divYield: 0,
-                        recentVolatility1Year: 0,
-                        recentVolatility3Year: 0,
-                        recentVolatility5Year: 0,
-                        recentVolatility7Year: 0,
-                        recentVolatility10Year: 0
-                    });
-                }
-            );
+            this.localSettings.portfolio[idx].subject.forEach((x: any) => {
+                universe.push({
+                    rowNumber: 0,
+                    firstDate: new Date(),
+                    assetCode: x.assetCode,
+                    exchange: x.exchange,
+                    // interface 제약때문에 dummy
+                    assetName: '',
+                    sector: '',
+                    industry: '',
+                    marketCap: 0,
+                    evEvitda: 0,
+                    divYield: 0,
+                    recentVolatility1Year: 0,
+                    recentVolatility3Year: 0,
+                    recentVolatility5Year: 0,
+                    recentVolatility7Year: 0,
+                    recentVolatility10Year: 0
+                });
+            });
             this.removeRecordAll();
             this.addPortfolio(universe);
         }
