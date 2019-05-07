@@ -18,6 +18,20 @@
                 <e-column field="assetName" headerText="Name" textAlign="left"></e-column>
                 <e-column field="exchange" headerText="Exchange" textAlign="left" :filter="filter"></e-column>
                 <e-column
+                    field="sector"
+                    headerText="Sector"
+                    textAlign="left"
+                    clipMode="EllipsisWithTooltip"
+                    :filter="filter"
+                ></e-column>
+                <e-column
+                    field="industry"
+                    headerText="Industry"
+                    textAlign="left"
+                    clipMode="EllipsisWithTooltip"
+                    :filter="filter"
+                ></e-column>
+                <e-column
                     field="marketCap"
                     headerText="Market Cap"
                     textAlign="left"
