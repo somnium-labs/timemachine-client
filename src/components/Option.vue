@@ -313,7 +313,7 @@ export default class Option extends Vue {
     private dateFormat: string = 'yyyy-MM-dd';
     private capitalStep: number = 1000;
     private comboboxSource = ['Ratio', 'Fixed'];
-    private benchmarkSource = ['JP225'];
+    private benchmarkSource = ['JP225', 'KOSPI'];
 
     private commissionStep: number = 0.0001;
     private commissionFormat: string = 'P2';
@@ -332,6 +332,7 @@ export default class Option extends Vue {
     private saveDisabled: boolean = true;
 
     private defaultOption = {
+        country: 'JP',
         startDate: '2010-01-01',
         endDate: '2019-01-01',
         capital: 100000,

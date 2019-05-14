@@ -97,7 +97,13 @@
                 <e-column field="volume" headerText="Volume" textAlign="left" format="N1"></e-column>
                 <e-column field="ratio" headerText="Ratio" textAlign="left" format="P2"></e-column>
                 <e-column field="date" headerText="Date" textAlign="left" :allowEditing="false"></e-column>
-                <e-column field="price" headerText="Price" textAlign="left" :allowEditing="false" format="N2"></e-column>
+                <e-column
+                    field="price"
+                    headerText="Price"
+                    textAlign="left"
+                    :allowEditing="false"
+                    format="N2"
+                ></e-column>
             </e-columns>
         </ejs-grid>
     </div>
@@ -235,6 +241,7 @@ export default class Portfolio extends Vue {
             method: 'post',
             headers: { 'Content-Type': 'application/json' },
             data: {
+                country: this.$store.state.option.country,
                 portfolio: assetInfo,
                 startDate: this.$store.state.option.startDate,
                 endDate: this.$store.state.option.endDate,

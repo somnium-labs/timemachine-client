@@ -20,6 +20,7 @@ export namespace SharedModel {
     }
 
     export interface TradeOption {
+        country: string;
         startDate: string;
         endDate: string;
         capital: number;

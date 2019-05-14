@@ -1,6 +1,14 @@
 <template>
     <div>
         <H3 style="color: white;">Universe</H3>
+        <ejs-combobox
+            ref="country"
+            id="country"
+            showClearButton="false"
+            :dataSource="countrySource"
+            :change="change"
+            width="200"
+        ></ejs-combobox>
         <ejs-grid
             ref="grid"
             id="universeGrid"
@@ -118,9 +126,14 @@ import {
     ContextMenu,
     RowDataBoundEventArgs
 } from '@syncfusion/ej2-vue-grids';
+import {
+    ComboBoxPlugin,
+    ComboBoxComponent
+} from '@syncfusion/ej2-vue-dropdowns';
 import moment from 'moment';
 
 Vue.use(GridPlugin);
+Vue.use(ComboBoxPlugin);
 
 @Component({
     provide: {
@@ -133,6 +146,7 @@ Vue.use(GridPlugin);
 export default class Universe extends Vue {
     private data: any[] = [];
     private originData: any[] = [];
+    private countrySource = ['JP', 'KR'];
 
     private pageSettings = { pageSize: 20 };
     private toolbar = ['ExcelExport'];
@@ -147,8 +161,18 @@ export default class Universe extends Vue {
     private formatOptions = { type: 'date', format: 'yyyy-MM-dd' };
 
     public async created() {
+        this.$store.state.option.country = 'JP';
+        await this.getUniverse('JP');
+    }
+
+    private mounted() {
+        const countryComboBox = this.$refs.country as ComboBoxComponent;
+        countryComboBox.ej2Instances.value = 'JP';
+    }
+
+    private async getUniverse(country: string) {
         const result = await axios(
-            `${this.$store.state.url}/api/values/Universe`
+            `${this.$store.state.url}/api/values/Universe/${country}`
         );
         const data = result.data;
         const temp: any[] = [];
@@ -224,6 +248,13 @@ export default class Universe extends Vue {
                 (args.row as Element).getAttribute('aria-rowindex') as string,
                 10
             ) + 1;
+    }
+
+    private change(args: any) {
+        if (args.element.id === 'country') {
+            this.$store.state.option.country = args.itemData.value;
+            this.getUniverse(args.itemData.value);
+        }
     }
 }
 </script>

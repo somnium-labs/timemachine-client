@@ -165,7 +165,6 @@ export default class Home extends Vue {
     }
 
     public async analyzeAllPortfolio() {
-
         this.snackbarText = 'Request is complete. Please wait.';
         this.snackbar = true;
 
@@ -177,6 +176,7 @@ export default class Home extends Vue {
             method: 'post',
             headers: { 'Content-Type': 'application/json' },
             data: {
+                country: this.$store.state.option.country,
                 startDate: this.$store.state.option.startDate,
                 endDate: this.$store.state.option.endDate,
                 capital: this.$store.state.option.capital,
