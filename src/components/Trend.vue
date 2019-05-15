@@ -81,6 +81,12 @@
                     textAlign="left"
                     format="P2"
                 ></e-column>
+                <e-column
+                    field="priceVolatilityRatio"
+                    headerText="Price Volatility"
+                    textAlign="left"
+                    format="P2"
+                ></e-column>
                 <e-column field="mddRatio" headerText="MDD" textAlign="left" format="P2"></e-column>
                 <e-column
                     field="sharpeRatio"
