@@ -72,36 +72,6 @@
                 <e-column field="pbr" headerText="PBR" textAlign="center"></e-column>
                 <e-column field="evEvitda" headerText="EV/EVITDA" textAlign="center"></e-column>
                 <e-column field="divYield" headerText="Div Yield" textAlign="center"></e-column>
-                <e-column
-                    field="recentVolatility1Year"
-                    headerText="Y1"
-                    textAlign="center"
-                    format="P2"
-                ></e-column>
-                <e-column
-                    field="recentVolatility3Year"
-                    headerText="Y3"
-                    textAlign="center"
-                    format="P2"
-                ></e-column>
-                <e-column
-                    field="recentVolatility5Year"
-                    headerText="Y5"
-                    textAlign="center"
-                    format="P2"
-                ></e-column>
-                <e-column
-                    field="recentVolatility7Year"
-                    headerText="Y7"
-                    textAlign="center"
-                    format="P2"
-                ></e-column>
-                <e-column
-                    field="recentVolatility10Year"
-                    headerText="Y10"
-                    textAlign="center"
-                    format="P2"
-                ></e-column>
             </e-columns>
         </ejs-grid>
     </div>
@@ -189,13 +159,13 @@ export default class Universe extends Vue {
                 marketCap: x.marketCap,
                 per: x.per,
                 pbr: x.pbr,
-                evEvitda: x.evEvitda,
-                divYield: x.divYield,
-                recentVolatility1Year: x.recentVolatility1Year,
-                recentVolatility3Year: x.recentVolatility3Year,
-                recentVolatility5Year: x.recentVolatility5Year,
-                recentVolatility7Year: x.recentVolatility7Year,
-                recentVolatility10Year: x.recentVolatility10Year
+                evEvitda: x.evEvitda
+                // divYield: x.divYield,
+                // recentVolatility1Year: x.recentVolatility1Year,
+                // recentVolatility3Year: x.recentVolatility3Year,
+                // recentVolatility5Year: x.recentVolatility5Year,
+                // recentVolatility7Year: x.recentVolatility7Year,
+                // recentVolatility10Year: x.recentVolatility10Year
             };
             temp.push(element);
         });
