@@ -37,6 +37,12 @@
                             format="¥#,##.#"
                         ></e-column>
                         <e-column
+                            field="transactions"
+                            headerText="Transactions"
+                            textAlign="left"
+                            format="#,##"
+                        ></e-column>
+                        <e-column
                             field="periodReturnRatio"
                             headerText="Period Returns"
                             textAlign="left"
@@ -674,7 +680,6 @@ export default class Report extends Vue {
         const strategies = Object.keys(data);
 
         strategies.forEach((strategy: string) => {
-
             if (strategy === 'Buy And Hold') {
                 trendComponent = this.$refs.buyAndHoldTrend as Trend;
             } else if (strategy === 'Moving Average') {
@@ -748,6 +753,11 @@ export default class Report extends Vue {
                         field: 'commission',
                         headerText: 'Commission',
                         format: '¥#,##.#'
+                    },
+                    {
+                        field: 'transactions',
+                        headerText: 'Transactions',
+                        format: 'N0'
                     },
                     {
                         field: 'periodReturnRatio',
