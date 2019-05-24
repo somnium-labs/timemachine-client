@@ -64,6 +64,12 @@
                     format="¥#,##.#"
                 ></e-column>
                 <e-column
+                    field="transactions"
+                    headerText="Transactions"
+                    textAlign="left"
+                    format="#,##"
+                ></e-column>
+                <e-column
                     field="periodReturnRatio"
                     headerText="Period Returns"
                     textAlign="left"
