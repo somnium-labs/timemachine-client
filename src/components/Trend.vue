@@ -153,7 +153,11 @@ export default class Trend extends Vue {
             console.log('save');
             const gridComponent = this.$refs.trend as GridComponent;
             const exportProperties: ExcelExportProperties = {
-                fileName: `trend_${this.date}_${this.strategy}.xlsx`
+                fileName: `${moment(this.$store.state.option
+                    .startDate as Date).format('YYYYMMDD')}_${moment(this.$store
+                    .state.option.endDate as Date).format('YYYYMMDD')}_(C)${
+                    this.$store.state.option.commission
+                }_(S)${this.$store.state.option.slippage}_${this.strategy}.xlsx`
             };
             gridComponent.excelExport(exportProperties);
         }
