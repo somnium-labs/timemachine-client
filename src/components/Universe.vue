@@ -116,7 +116,7 @@ Vue.use(ComboBoxPlugin);
 export default class Universe extends Vue {
     private data: any[] = [];
     private originData: any[] = [];
-    private countrySource = ['JP', 'KR'];
+    private countrySource = ['JP', 'KR', 'FX'];
 
     private pageSettings = { pageSize: 20 };
     private toolbar = ['ExcelExport'];
@@ -132,7 +132,7 @@ export default class Universe extends Vue {
 
     public async created() {
         this.$store.state.option.country = 'JP';
-        await this.getUniverse('JP');
+        await this.getUniverse('JP', undefined);
     }
 
     private mounted() {
@@ -140,10 +140,13 @@ export default class Universe extends Vue {
         countryComboBox.ej2Instances.value = 'JP';
     }
 
-    private async getUniverse(country: string) {
-        const result = await axios(
-            `${this.$store.state.url}/api/values/Universe/${country}`
-        );
+    private async getUniverse(country: string, exchange?: string) {
+        const uri = exchange
+            ? `${
+                  this.$store.state.url
+              }/api/values/Universe/${country}/${exchange}`
+            : `${this.$store.state.url}/api/values/Universe/${country}`;
+        const result = await axios(uri);
         const data = result.data;
         const temp: any[] = [];
         let row: number = 0;
@@ -223,7 +226,12 @@ export default class Universe extends Vue {
     private change(args: any) {
         if (args.element.id === 'country') {
             this.$store.state.option.country = args.itemData.value;
-            this.getUniverse(args.itemData.value);
+
+            if (args.itemData.value === 'FX') {
+                this.getUniverse('JP', 'FX');
+            } else {
+                this.getUniverse(args.itemData.value);
+            }
         }
     }
 }
