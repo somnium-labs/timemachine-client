@@ -16,8 +16,8 @@
                     :toolbarClick="toolbarClick"
                 >
                     <e-columns>
-                        <e-column field="assetCode" headerText="Type" textAlign="left"></e-column>
-                        <e-column field="assetName" headerText="Strategy" textAlign="left"></e-column>
+                        <e-column field="type" headerText="Type" textAlign="left"></e-column>
+                        <e-column field="strategyType" headerText="Strategy" textAlign="left"></e-column>
                         <e-column
                             field="initialBalance"
                             headerText="Initial Balance"
