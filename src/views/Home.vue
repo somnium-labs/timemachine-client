@@ -62,7 +62,7 @@ import {
     SidebarPlugin,
     SidebarComponent
 } from '@syncfusion/ej2-vue-navigations';
-import { SharedModel } from '../model/SharedModel';
+import { ISubject } from '../model/SharedModel';
 import { TabPlugin, TabComponent } from '@syncfusion/ej2-vue-navigations';
 import { enableRipple, createElement } from '@syncfusion/ej2-base';
 import axios from 'axios';
@@ -118,13 +118,13 @@ export default class Home extends Vue {
         }
     }
 
-    public addPortfolio(universe: SharedModel.Subject[]) {
+    public addPortfolio(universe: ISubject[]) {
         const portfolioComponent = this.$refs.portfolio as Portfolio;
         portfolioComponent.addPortfolio(universe);
     }
 
     public setBenchmark(benchmark: string) {
-        const universe: SharedModel.Subject[] = [];
+        const universe: ISubject[] = [];
         universe.push({
             rowNumber: 0,
             firstDate: new Date(),
