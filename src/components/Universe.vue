@@ -29,9 +29,14 @@
             :rowDataBound="rowDataBound"
         >
             <e-columns>
-                <!--
-                <e-column field="rowNumber" headerText="Row" textAlign="left"></e-column>
-                -->
+                <e-column
+                    field="rowNumber"
+                    headerText="No"
+                    textAlign="left"
+                    width="50"
+                    :allowSorting="false"
+                    :allowFiltering="false"
+                ></e-column>
                 <e-column field="assetCode" headerText="Code" textAlign="left"></e-column>
                 <e-column
                     field="assetName"
@@ -114,8 +119,8 @@ Vue.use(ComboBoxPlugin);
     }
 })
 export default class Universe extends Vue {
-    private data: any[] = [];
-    private originData: any[] = [];
+    private data: SharedModel.Subject[] = [];
+    private originData: SharedModel.Subject[] = [];
     private countrySource = ['JP', 'KR', 'FX_1D', 'FX_1W', 'FX_60M'];
 
     private pageSettings = { pageSize: 20 };
@@ -129,6 +134,8 @@ export default class Universe extends Vue {
     private filterOptions = { type: 'Menu' };
     private filter = { type: 'CheckBox' };
     private formatOptions = { type: 'date', format: 'yyyy-MM-dd' };
+
+    private bRefresh: boolean = false;
 
     public async created() {
         this.$store.state.option.country = 'JP';
@@ -173,7 +180,7 @@ export default class Universe extends Vue {
             temp.push(element);
         });
 
-        this.data = temp;
+        this.setData(temp);
         this.originData = temp;
     }
 
@@ -197,11 +204,11 @@ export default class Universe extends Vue {
         } else if (args.item.id === 'select') {
             const gridComponent = this.$refs.grid as GridComponent;
             const selectedrecords = (gridComponent.getSelectedRecords() as any) as SharedModel.Subject[];
-            this.data = selectedrecords;
+            this.setData(selectedrecords);
         } else if (args.item.id === 'reset') {
             const gridComponent = this.$refs.grid as GridComponent;
             const selectedrecords = (gridComponent.getSelectedRecords() as any) as SharedModel.Subject[];
-            this.data = this.originData;
+            this.setData(this.originData);
         }
     }
 
@@ -210,17 +217,31 @@ export default class Universe extends Vue {
         gridComponent.autoFitColumns([
             // 'rowNumber',
             'assetCode',
-            'assetName',
+            // 'assetName',
             'sector'
         ]);
     }
 
     private rowDataBound(args: RowDataBoundEventArgs) {
-        (args.data as SharedModel.Subject).rowNumber =
+        const rowNumber: number =
             parseInt(
                 (args.row as Element).getAttribute('aria-rowindex') as string,
                 10
             ) + 1;
+
+        if ((args.data as SharedModel.Subject).rowNumber !== rowNumber) {
+            (args.data as SharedModel.Subject).rowNumber = rowNumber;
+            this.bRefresh = true;
+        }
+
+        if (
+            (rowNumber >= this.data.length || rowNumber >= 20) &&
+            this.bRefresh
+        ) {
+            this.bRefresh = false;
+            const gridComponent = this.$refs.grid as GridComponent;
+            gridComponent.refresh();
+        }
     }
 
     private change(args: any) {
@@ -235,6 +256,10 @@ export default class Universe extends Vue {
                 this.getUniverse(args.itemData.value);
             }
         }
+    }
+
+    private setData(value: any[]) {
+        this.data = value;
     }
 }
 </script>
