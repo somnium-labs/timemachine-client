@@ -275,7 +275,6 @@
         <div class="center-align">
             <v-btn color="success" @click="analyzePortfolio">Analyze Portfolio</v-btn>
             <v-btn color="warning" @click="analyzeAllPortfolio">Analyze All</v-btn>
-            <v-btn color="error" @click="testConsole">Print Console</v-btn>
         </div>
     </v-container>
 </template>
@@ -334,8 +333,6 @@ export default class Option extends Vue {
     private localSettingsNames: string[] = [];
 
     private saveDisabled: boolean = true;
-
-    private bTest: boolean = true;
 
     private defaultOption: ITradeOption = {
         country: 'JP',
@@ -540,10 +537,6 @@ export default class Option extends Vue {
     private analyzeAllPortfolio() {
         const homeComponent = this.$parent as Home;
         homeComponent.analyzeAllPortfolio();
-    }
-
-    private testConsole() {
-        console.log('test' + this.useMovingAverage);
     }
 
     private capitalChange(args: any) {

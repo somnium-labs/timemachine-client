@@ -309,7 +309,6 @@ import {
 import { Browser } from '@syncfusion/ej2-base';
 import axios from 'axios';
 import { TS } from 'typescript-linq';
-import { SharedModel } from '../model/SharedModel';
 import Record from '@/components/Record.vue';
 import Transaction from '@/components/Transaction.vue';
 import Trend from '@/components/Trend.vue';
