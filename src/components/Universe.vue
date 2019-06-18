@@ -114,7 +114,7 @@ Vue.use(ComboBoxPlugin);
 export default class Universe extends Vue {
     private data: ISubject[] = [];
     private originData: ISubject[] = [];
-    private countrySource = ['JP', 'KR', 'FX'];
+    private countrySource = ['JP', 'KR', 'FX_1D', 'FX_1W', 'FX_60M'];
 
     private pageSettings = { pageSize: 20 };
     private toolbar = ['ExcelExport'];
@@ -236,8 +236,10 @@ export default class Universe extends Vue {
         if (args.element.id === 'country') {
             this.$store.state.option.country = args.itemData.value;
 
-            if (args.itemData.value === 'FX') {
-                this.getUniverse('JP', 'FX');
+            const selectedUniverse = args.itemData.value as string;
+
+            if (selectedUniverse.indexOf('FX') !== -1) {
+                this.getUniverse('JP', selectedUniverse);
             } else {
                 this.getUniverse(args.itemData.value);
             }
