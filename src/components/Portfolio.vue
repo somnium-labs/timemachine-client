@@ -111,9 +111,9 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import axios, { AxiosPromise, AxiosInstance } from 'axios';
+import axios from 'axios';
 import { TS } from 'typescript-linq';
-import { ISubject, IAssetInfo, IBenchmark, IRecord } from '../model/SharedModel';
+import { SharedModel } from '../model/SharedModel';
 import {
     GridPlugin,
     GridComponent,
@@ -132,15 +132,15 @@ Vue.use(GridPlugin);
     }
 })
 export default class Portfolio extends Vue {
-    private data: IRecord[] = [];
+    private data: any[] = [];
     private dismissSecs: number = 5;
     private dismissCountDown: number = 0;
 
     // key: asset code
     private portfolio: TS.Collections.Dictionary<
         string,
-        IRecord
-    > = new TS.Collections.Dictionary<string, IRecord>();
+        any
+    > = new TS.Collections.Dictionary<string, any>();
     private selectionOptions = { type: 'Multiple' };
     private contextMenuItems = [
         { text: 'Remove Portfolio', id: 'removePortfolio' }
@@ -179,9 +179,9 @@ export default class Portfolio extends Vue {
         }
     }
 
-    public async addPortfolio(universe: ISubject[]) {
-        const assetInfo: IAssetInfo[] = [];
-        universe.forEach((x: ISubject) => {
+    public async addPortfolio(universe: SharedModel.Subject[]) {
+        const assetInfo: any[] = [];
+        universe.forEach((x: SharedModel.Subject) => {
             if (!this.portfolio.containsKey(x.assetCode)) {
                 assetInfo.push({
                     assetCode: x.assetCode,
@@ -208,7 +208,7 @@ export default class Portfolio extends Vue {
             const newPrice = x.openPrice;
             const newVolume =
                 (this.$store.state.option.capital * newRatio) / newPrice;
-            const record: IRecord = {
+            const record = {
                 assetCode: x.assetCode,
                 assetName: x.assetName,
                 exchange: x.exchange,
@@ -225,13 +225,13 @@ export default class Portfolio extends Vue {
         return this.portfolio.first().value;
     }
 
-    public async analyzePortfolio(benchmark: IBenchmark) {
-        const assetInfo: IBenchmark[] = [];
-        this.portfolio.forEach((x: TS.Collections.KeyValuePair<string, IRecord>) => {
-            const asset: IBenchmark = {
+    public async analyzePortfolio(benchmark: any) {
+        const assetInfo: any[] = [];
+        this.portfolio.forEach((x: any) => {
+            const asset = {
                 assetCode: x.value.assetCode,
                 volume: x.value.volume,
-                ratio: x.value.ratio,
+                ratio: x.value.ratio
             };
             assetInfo.push(asset);
         });
@@ -269,8 +269,8 @@ export default class Portfolio extends Vue {
     }
 
     public async onChangeStartDate(date: string) {
-        const assetInfo: IAssetInfo[] = [];
-        this.portfolio.forEach((x: TS.Collections.KeyValuePair<string, IRecord>) => {
+        const assetInfo: any[] = [];
+        this.portfolio.forEach((x: any) => {
             const asset = {
                 assetCode: x.value.assetCode,
                 exchange: x.value.exchange
@@ -290,19 +290,16 @@ export default class Portfolio extends Vue {
 
         const data = response.data.data;
         data.forEach((x: any) => {
-            const value = this.portfolio.getValue(x.assetCode);
-            if (value !== undefined) {
-                value.date = x.date;
-                value.price = x.openPrice;
-            }
+            this.portfolio.getValue(x.assetCode).date = x.date;
+            this.portfolio.getValue(x.assetCode).price = x.openPrice;
         });
 
         this.refreshPortfolio();
     }
 
     public refreshPortfolio() {
-        const temp: IRecord[] = [];
-        this.portfolio.forEach((x: TS.Collections.KeyValuePair<string, IRecord>) => {
+        const temp: any[] = [];
+        this.portfolio.forEach((x: any) => {
             x.value.ratio = 1 / this.portfolio.count();
             x.value.volume =
                 (this.$store.state.option.capital * x.value.ratio) /
@@ -316,7 +313,7 @@ export default class Portfolio extends Vue {
         this.dismissCountDown = dismissCountDown;
     }
 
-    private addRecord(record: IRecord) {
+    private addRecord(record: any) {
         this.portfolio.add(record.assetCode, {
             assetCode: record.assetCode,
             assetName: record.assetName,
@@ -332,10 +329,10 @@ export default class Portfolio extends Vue {
 
     private removeRecord() {
         const gridComponent = this.$refs.portfolioComponent as GridComponent;
-        const selectedRecords = (gridComponent.getSelectedRecords() as any) as ISubject[];
+        const selectedRecords = (gridComponent.getSelectedRecords() as any) as SharedModel.Subject[];
         if (0 < selectedRecords.length) {
             gridComponent.deleteRecord();
-            selectedRecords.forEach((subject: ISubject) => {
+            selectedRecords.forEach((subject: SharedModel.Subject) => {
                 this.portfolio.remove(subject.assetCode);
             });
 
@@ -386,9 +383,9 @@ export default class Portfolio extends Vue {
             return;
         }
 
-        const portfolio: IAssetInfo[] = [];
+        const portfolio: any = [];
 
-        this.portfolio.forEach((x: TS.Collections.KeyValuePair<string, IRecord>) => {
+        this.portfolio.forEach((x: any) => {
             portfolio.push({
                 assetCode: x.value.assetCode,
                 exchange: x.value.exchange
@@ -425,7 +422,7 @@ export default class Portfolio extends Vue {
         });
 
         if (idx !== -1) {
-            const universe: ISubject[] = [];
+            const universe: SharedModel.Subject[] = [];
             this.localSettings.portfolio[idx].subject.forEach((x: any) => {
                 universe.push({
                     rowNumber: 0,

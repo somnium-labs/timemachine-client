@@ -109,7 +109,7 @@
             </v-flex>
             <v-flex xs4>
                 <ejs-numerictextbox
-                    v-model="capital"
+                    :value="capital"
                     :step="capitalStep"
                     format="¥#,##"
                     :change="capitalChange"
@@ -140,9 +140,10 @@
                 <ejs-numerictextbox
                     ref="commission"
                     id="commission"
-                    v-model="commission"
+                    :value="commission"
                     :step="commissionStep"
                     :format="commissionFormat"
+                    :change="commissionChange"
                 ></ejs-numerictextbox>
             </v-flex>
         </v-layout>
@@ -168,9 +169,10 @@
             </v-flex>
             <v-flex xs4>
                 <ejs-numerictextbox
-                    v-model="slippage"
+                    :value="slippage"
                     :step="slippageStep"
                     :format="slippageFormat"
+                    :change="slippageChange"
                 ></ejs-numerictextbox>
             </v-flex>
         </v-layout>
@@ -198,7 +200,7 @@
                     ref="leverage"
                     class="e-checkbox-wrapper"
                     label="Allow decimal point"
-                    v-model="usePointVolume"
+                    :change="toggleAllowDecimalPoint"
                 ></ejs-checkbox>
             </v-flex>
         </v-layout>
@@ -208,11 +210,7 @@
                 <h6 style="margin-top: 0.28em; color: white;">Leverage</h6>
             </v-flex>
             <v-flex xs4>
-                <ejs-checkbox 
-                    ref="leverage" 
-                    class="e-checkbox-wrapper" 
-                    v-model="useOutstandingBalance"
-                ></ejs-checkbox>
+                <ejs-checkbox ref="leverage" class="e-checkbox-wrapper" :change="toggleLeverage"></ejs-checkbox>
             </v-flex>
         </v-layout>
         <!-- 벤치마크 -->
@@ -240,7 +238,7 @@
                     ref="buyAndHold"
                     class="e-checkbox-wrapper"
                     label="Use"
-                    v-model="useBuyAndHold"
+                    :change="toggleBuyAndHold"
                 ></ejs-checkbox>
             </v-flex>
         </v-layout>
@@ -254,7 +252,7 @@
                     ref="volatilityBreakout"
                     class="e-checkbox-wrapper"
                     label="Use"
-                    v-model="useVolatilityBreakout"
+                    :change="toggleVolatilityBreakout"
                 ></ejs-checkbox>
             </v-flex>
         </v-layout>
@@ -268,14 +266,13 @@
                     ref="movingAverage"
                     class="e-checkbox-wrapper"
                     label="Use"
-                    v-model="useMovingAverage"
+                    :change="toggleMovingAverage"
                 ></ejs-checkbox>
             </v-flex>
         </v-layout>
         <div class="center-align">
             <v-btn color="success" @click="analyzePortfolio">Analyze Portfolio</v-btn>
             <v-btn color="warning" @click="analyzeAllPortfolio">Analyze All</v-btn>
-            <v-btn color="error" @click="testConsole">Print Console</v-btn>
         </div>
     </v-container>
 </template>
@@ -289,7 +286,7 @@ import {
 import { NumericTextBoxPlugin } from '@syncfusion/ej2-vue-inputs';
 import { enableRipple } from '@syncfusion/ej2-base';
 import Home from '../views/Home.vue';
-import { ISubject, ITradeOption } from '../model/SharedModel';
+import { SharedModel } from '../model/SharedModel';
 import {
     CheckBoxPlugin,
     CheckBoxComponent,
@@ -299,7 +296,6 @@ import {
     ComboBoxPlugin,
     ComboBoxComponent
 } from '@syncfusion/ej2-vue-dropdowns';
-import Universe from './Universe.vue';
 
 enableRipple(true);
 Vue.use(CheckBoxPlugin);
@@ -335,9 +331,7 @@ export default class Option extends Vue {
 
     private saveDisabled: boolean = true;
 
-    private bTest: boolean = true;
-
-    private defaultOption: ITradeOption = {
+    private defaultOption = {
         country: 'JP',
         startDate: '2010-01-01',
         endDate: '2019-01-01',
@@ -529,7 +523,29 @@ export default class Option extends Vue {
                 const homeComponent = this.$parent as Home;
                 homeComponent.onChangeStartDate(this.startDate);
             }
+        } else if (args.element.id === 'endDate') {
+            this.endDate = args.element.value;
         }
+    }
+
+    private toggleLeverage(args: any) {
+        this.useOutstandingBalance = args.checked;
+    }
+
+    private toggleAllowDecimalPoint(args: any) {
+        this.usePointVolume = args.checked;
+    }
+
+    private toggleBuyAndHold(args: any) {
+        this.useBuyAndHold = args.checked;
+    }
+
+    private toggleVolatilityBreakout(args: any) {
+        this.useVolatilityBreakout = args.checked;
+    }
+
+    private toggleMovingAverage(args: any) {
+        this.useMovingAverage = args.checked;
     }
 
     private analyzePortfolio() {
@@ -542,13 +558,19 @@ export default class Option extends Vue {
         homeComponent.analyzeAllPortfolio();
     }
 
-    private testConsole() {
-        console.log('test' + this.useMovingAverage);
+    private commissionChange(args: any) {
+        this.commission = args.value;
     }
 
     private capitalChange(args: any) {
+        this.capital = args.value;
+
         const homeComponent = this.$parent as Home;
         homeComponent.refreshPortfolio();
+    }
+
+    private slippageChange(args: any) {
+        this.slippage = args.value;
     }
 
     private saveOption() {
@@ -618,7 +640,7 @@ export default class Option extends Vue {
     //     this.updateOptionData(this.defaultOption);
     // }
 
-    private updateOptionData(option: ITradeOption) {
+    private updateOptionData(option: SharedModel.TradeOption) {
         this.$store.state.option = {
             startDate: option.startDate,
             endDate: option.endDate,
@@ -637,7 +659,7 @@ export default class Option extends Vue {
         };
     }
 
-    private updateOptionUI(option: ITradeOption) {
+    private updateOptionUI(option: SharedModel.TradeOption) {
         const startDateComponent = this.$refs.startDate as DatePickerComponent;
         startDateComponent.ej2Instances.value = option.startDate;
 

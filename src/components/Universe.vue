@@ -42,7 +42,7 @@
                     field="firstDate"
                     headerText="First Date"
                     textAlign="left"
-                    :format="{ type: 'date', format: 'yyyy-MM-dd' }"
+                    :format="formatOptions"
                     type="date"
                 ></e-column>
                 <e-column
@@ -66,10 +66,10 @@
                     format="N0"
                     width="180"
                 ></e-column>
-                <e-column field="per" headerText="PER" textAlign="center" width="80"></e-column>
-                <e-column field="pbr" headerText="PBR" textAlign="center" width="80"></e-column>
-                <e-column field="evEvitda" headerText="EV/EVITDA" textAlign="center" width="80"></e-column>
-                <e-column field="divYield" headerText="Div Yield" textAlign="center" width="80"></e-column>
+                <e-column field="per" headerText="PER" textAlign="center"></e-column>
+                <e-column field="pbr" headerText="PBR" textAlign="center"></e-column>
+                <e-column field="evEvitda" headerText="EV/EVITDA" textAlign="center"></e-column>
+                <e-column field="divYield" headerText="Div Yield" textAlign="center"></e-column>
             </e-columns>
         </ejs-grid>
     </div>
@@ -78,7 +78,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Provide, Inject } from 'vue-property-decorator';
 import axios from 'axios';
-import { ISubject } from '../model/SharedModel';
+import { SharedModel } from '../model/SharedModel';
 import Option from '@/components/Option.vue';
 import Home from '@/views/Home.vue';
 import {
@@ -112,8 +112,8 @@ Vue.use(ComboBoxPlugin);
     }
 })
 export default class Universe extends Vue {
-    private data: ISubject[] = [];
-    private originData: ISubject[] = [];
+    private data: SharedModel.Subject[] = [];
+    private originData: SharedModel.Subject[] = [];
     private countrySource = ['JP', 'KR', 'FX'];
 
     private pageSettings = { pageSize: 20 };
@@ -126,6 +126,7 @@ export default class Universe extends Vue {
     private selectionOptions = { type: 'Multiple' };
     private filterOptions = { type: 'Menu' };
     private filter = { type: 'CheckBox' };
+    private formatOptions = { type: 'date', format: 'yyyy-MM-dd' };
 
     private bRefresh: boolean = false;
 
@@ -149,7 +150,7 @@ export default class Universe extends Vue {
         const data = result.data;
         const temp: any[] = [];
         let row: number = 0;
-        data.forEach((x: ISubject) => {
+        data.forEach((x: SharedModel.Subject) => {
             const element = {
                 rowNumber: (row++ % 20) + 1,
                 firstDate: moment(x.firstDate as Date),
@@ -189,17 +190,17 @@ export default class Universe extends Vue {
     private async contextMenuClick(args: any) {
         if (args.item.id === 'addPortfolio') {
             const gridComponent = this.$refs.grid as GridComponent;
-            const selectedrecords = (gridComponent.getSelectedRecords() as any) as ISubject[];
+            const selectedrecords = (gridComponent.getSelectedRecords() as any) as SharedModel.Subject[];
 
             const parent = this.$parent as Home;
             parent.addPortfolio(selectedrecords);
         } else if (args.item.id === 'select') {
             const gridComponent = this.$refs.grid as GridComponent;
-            const selectedrecords = (gridComponent.getSelectedRecords() as any) as ISubject[];
+            const selectedrecords = (gridComponent.getSelectedRecords() as any) as SharedModel.Subject[];
             this.setData(selectedrecords);
         } else if (args.item.id === 'reset') {
             const gridComponent = this.$refs.grid as GridComponent;
-            const selectedrecords = (gridComponent.getSelectedRecords() as any) as ISubject[];
+            const selectedrecords = (gridComponent.getSelectedRecords() as any) as SharedModel.Subject[];
             this.setData(this.originData);
         }
     }
@@ -220,8 +221,8 @@ export default class Universe extends Vue {
                 10
             ) + 1;
 
-        if ((args.data as ISubject).rowNumber !== rowNumber) {
-            (args.data as ISubject).rowNumber = rowNumber;
+        if ((args.data as SharedModel.Subject).rowNumber !== rowNumber) {
+            (args.data as SharedModel.Subject).rowNumber = rowNumber;
             this.bRefresh = true;
             }
 
@@ -244,7 +245,7 @@ export default class Universe extends Vue {
         }
     }
 
-    private setData(value: ISubject[]) {
+    private setData(value: any[]) {
         this.data = value;
     }
 }
