@@ -642,6 +642,7 @@ export default class Option extends Vue {
 
     private updateOptionData(option: SharedModel.TradeOption) {
         this.$store.state.option = {
+            country: this.$store.state.option.country,
             startDate: option.startDate,
             endDate: option.endDate,
             capital: option.capital,
